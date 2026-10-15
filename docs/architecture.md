@@ -2,7 +2,7 @@
 
 The browser animates from typed numeric buffers. Canvas draws only when the clock, camera, layer, player or viewport changes. Player movement never causes individual React renders. React clock updates are capped at 10 Hz; statistics requests at one per replay second and player selection. Changes abort old HTTP requests; responses from another player or a future replay time are not shown. A small stale interval up to the previous second is labelled by its timestamp.
 
-D3 owns camera transforms. Canvas caps pixel ratio at 2 for high-DPI displays. Positions are interpolated between 10 Hz samples. The single global replay time synchronises positions, events, metrics and explanations. All analytics use completed events with event time <= replay time. A browser receives the full small fixture for scrubbing; this is replay, not a secure live-data streaming implementation.
+D3 owns camera transforms. Canvas caps pixel ratio at 2 for high-DPI displays. Positions are interpolated between 10 Hz samples. The single global replay time synchronises positions, events, metrics and explanations. All analytics use completed events with event time <= replay time. Recorded replay receives the full fixture for scrubbing. Live simulation bootstraps only frame zero and receives subsequent frames over SSE, paced by the server clock.
 
 Recharts is lazy-loaded in analyst mode. Animation does not await chart code, API responses or AI calls. The initial fixture is converted once to Float32Array buffers. For much larger matches, add chunked loading and a worker based on profiling; they are unnecessary infrastructure for this 60-second fixture.
 
@@ -35,11 +35,11 @@ The baseline is preserved in commit 80451aa. Work continues on `codex/realistic-
 
 Each of the three seeded matches owns one `MatchIntelligence` index, built at process startup. It validates the ownership chain, indexes release/reception state transitions and derives confirmed single-pass pressure escapes from tracking geometry. Requests use binary search over timestamps; the detection work does not run once per player, browser frame or analysis request. The explanation adapter reuses the same index. Team metrics and comparisons use the selected player's team.
 
-The API never returns insights confirmed after the requested replay time. The frontend additionally rejects responses later than its current clock and clears historical markings when their insight is no longer visible. An explicit scenario switch remounts the workspace, cancels old requests and resets the clock and local caches. The complete replay fixture remains available to the browser; these guarantees are presentation semantics, not access control for a live feed.
+The API never returns insights confirmed after the requested replay time. The frontend additionally rejects responses later than its current clock and clears historical markings when their insight is no longer visible. An explicit scenario switch remounts the workspace, cancels old requests and resets the clock and local caches. Recorded mode still exposes the full fixture. Live requests additionally enforce the session's server-time boundary. The public local replay endpoint remains available; this is a simulation rather than access control for a confidential external feed.
 
 The timeline now contains calculated findings instead of annotated scenes. Selecting one pauses at confirmation time and draws a labelled historical pass trace with opponent evidence. Analyst mode includes numeric evidence and the detection rule; fan mode gives a concise explanation. Player-focus filtering narrows findings to those involving the selected passer or receiver. No animation frame waits for analysis or AI. Canvas receives a small overlay object and retains its existing renderer loop.
 
-Next: incremental ingestion/live transport, richer multi-pass patterns, structured model tool use and multilingual recaps. No paid AI service is needed for the current detector.
+Next: incremental detection for external feeds, richer multi-pass patterns, structured model tool use and multilingual recaps. No paid AI service is needed for the current detector.
 
 
 ## Validation of possession milestone
@@ -58,3 +58,26 @@ Frontend catalogs live in `frontend/src/i18n/en.json` and `de.json`. Their keys 
 Backend text catalogs live in `backend/app/locales/`. Detection indices contain language-neutral evidence. `/api/analysis` accepts `language=en|de`; `/api/explain` takes the same field in its JSON body. Both default to English. Localization copies visible findings rather than mutating the shared index. Responses include their language; the client rejects stale responses after a language switch, aborts pending explanations and keys explanation caches by language. Player roles use stable codes. API notices and deterministic fallback explanations use the requested language without model calls.
 
 To add a language, extend the language unions, picker and catalogs in both layers, then run catalog parity and end-to-end tests. Initial scope is intentionally English/German; no runtime translation service or new dependency is required.
+
+
+## Live transport and replay buffer
+
+`POST /api/live` takes a scenario and optional UUID session ID. Repeating the same ID/scenario is idempotent, including React StrictMode bootstrap; an ID cannot switch scenarios. The response contains match/player metadata, initial positions and no future tracking or events.
+
+`GET /api/live/{session_id}/events?after=N` is a same-origin Server-Sent Events stream. Each `frame` has a monotonically increasing SSE `id` and JSON `{index,time,positions,ball,events}`. Times are match-relative seconds; only events completed by that frame are included. Frame zero is the bootstrap; streaming starts at one. `Last-Event-ID` takes precedence over `after` for native reconnects. Invalid/future cursors are rejected. The client closes and reconnects from its last successfully applied index if a packet is malformed or missing; duplicates are ignored. `complete` closes the connection after the final frame; `expired` tells the client to stop retrying an unknown/expired session.
+
+The backend pre-encodes each of the three fixed fixtures once. A monotonic clock releases frames at 1x independently of every viewer. Catch-up yields cached packets in order and cooperatively yields between batches. There is no per-viewer producer queue. Session state is protected across FastAPI worker threads, capped at 64 entries and expires after 600 seconds. Session state is process-local: run one worker for this demo. An SSE-capable reverse proxy must avoid response buffering and allow long-lived requests; the endpoint supplies `Cache-Control: no-cache, no-transform` and `X-Accel-Buffering: no`.
+
+The browser preallocates Float32Array storage for the declared duration and player count (about 108 KiB for tracking and ball in a 601-frame match). Accepted frames fill those arrays in place; only received timestamps and deduplicated events are appended. The original nested positions/ball arrays are bootstrap data only. The renderer uses the numeric arrays and never reads beyond received timestamps. Catch-up packets do not copy accumulated history, and feed/clock notifications are throttled to 10 Hz during continuous updates. Terminal and user-control changes notify immediately.
+
+The view clock is separate from the source clock. Live following uses a small interpolation delay, with a hard received-frame boundary. Pause/seek changes only the view; receiving continues. Catching up in replay stops at the current buffer edge rather than extrapolating future movement. Return-to-live resets playback to 1x near the received edge. Offline/online events, native EventSource retry and a five-second silence watchdog recover broken or stalled connections. Scenario/source changes close the old stream, abort requests and dispose timers. Language changes preserve the session and camera.
+
+Analysis/explanation requests in an active session are bounded by both the selected replay time and the server's available time. Detection remains the existing precomputed fixture index with timestamp cutoffs, not an incremental detector for unknown future input. The client rejects mismatched session/scenario/player/language responses. On completion or expiry, buffered history uses the recorded analysis index at the locally bounded replay time, so analysis remains usable without a live session. Refreshing the page starts over; buffers are not persisted.
+
+Protocol references: [FastAPI StreamingResponse](https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse), [MDN Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).
+
+## Live milestone verification
+
+49 backend tests and 14 Playwright tests pass, with TypeScript and the production build passing. Coverage includes paced release, no future bootstrap/analysis, resume cursors, duplicate/gap handling, capacity/expiry, replay clock bounds, real reconnect, scenario/language isolation, and completion/expiry with retained replay analysis. The browser suite includes a 360 px viewport. `node scripts/live-check.mjs` additionally checks a complete 60-second broadcast, records a 180-frame live sample with pressure overlays/zoom, and saves dark/light/mobile screenshots under ignored `artifacts/`.
+
+The local live sample on 2026-10-15 measured median 16.7 ms, p95 17.2 ms and no frames above 33.4 ms out of 180. This short headless Edge sample is not a sustained or cross-device guarantee.

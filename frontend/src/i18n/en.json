@@ -102,5 +102,28 @@
   "opponents": {
     "one": "{count} opponent",
     "other": "{count} opponents"
+  },
+  "source": "Data source",
+  "recordedReplay": "Recorded replay",
+  "liveSimulation": "Live simulation",
+  "replaySourceNote": "Full recorded match · freely seekable",
+  "liveSourceNote": "Synthetic broadcast · real-time delivery",
+  "feed.connecting": "Connecting…",
+  "feed.receiving": "Receiving live",
+  "feed.reconnecting": "Reconnecting…",
+  "feed.complete": "Simulation complete",
+  "feed.expired": "Session expired",
+  "feed.failed": "Stream interrupted",
+  "receivedAt": "Received to {time}",
+  "followingLive": "LIVE",
+  "bufferedReplay": "Replay · {seconds} s behind",
+  "backToLive": "Back to live",
+  "reconnect": "Reconnect",
+  "newSimulation": "New simulation",
+  "liveReplayNote": "Pause and rewind affect only your view. Incoming frames continue to fill the replay buffer.",
+  "expiredNote": "Received moments remain available for replay and analysis. Start a new simulation to go live again.",
+  "receivedEvents": {
+    "one": "{count} event",
+    "other": "{count} events"
   }
 }

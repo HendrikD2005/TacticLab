@@ -102,5 +102,28 @@
   "opponents": {
     "one": "{count} Gegner",
     "other": "{count} Gegner"
+  },
+  "source": "Datenquelle",
+  "recordedReplay": "Aufgezeichneter Replay",
+  "liveSimulation": "Live-Simulation",
+  "replaySourceNote": "Vollständige Aufzeichnung · frei spulbar",
+  "liveSourceNote": "Synthetische Übertragung · Empfang in Echtzeit",
+  "feed.connecting": "Verbinde …",
+  "feed.receiving": "Live-Empfang",
+  "feed.reconnecting": "Verbindung wird wiederhergestellt …",
+  "feed.complete": "Simulation beendet",
+  "feed.expired": "Sitzung abgelaufen",
+  "feed.failed": "Stream unterbrochen",
+  "receivedAt": "Empfangen bis {time}",
+  "followingLive": "LIVE",
+  "bufferedReplay": "Replay · {seconds} s zurück",
+  "backToLive": "Zurück zu Live",
+  "reconnect": "Neu verbinden",
+  "newSimulation": "Neue Simulation",
+  "liveReplayNote": "Pause und Zurückspulen betreffen nur deine Ansicht. Neue Frames füllen weiterhin den Replay-Puffer.",
+  "expiredNote": "Empfangene Szenen bleiben für Replay und Analyse verfügbar. Starte eine neue Simulation für weitere Live-Daten.",
+  "receivedEvents": {
+    "one": "{count} Ereignis",
+    "other": "{count} Ereignisse"
   }
 }

@@ -8,7 +8,7 @@ export interface Scene{match:Match;positions:Float32Array;ball:Float32Array}
 export interface Metrics{attempts:number;completed:number;accuracy:number|null;progressive:number;pressure_attempts:number;pressure_completed:number;forward:number;distance_m:number;event_ids:string[]}
 export interface Possession{at:number;since:number;phase_id:number;phase_start:number;team:'home'|'away'|null;player_id:number|null;status:'unknown'|'controlled'|'in_flight'|'loose';duration:number}
 export interface TacticalInsight{id:string;kind:'pressing_escape';start:number;end:number;confirmed_at:number;team:'home'|'away';phase_id:number;player_ids:number[];event_ids:string[];title:string;summary:string;explanation:string;limitation:string;evidence:{gain_m:number;pressure_before_m:number;space_after_m:number;bypassed:number;retained_s:number};overlay:{start:number[];end:number[];opponents:{id:number;start:number[];end:number[]}[]}}
-export interface Analysis{language:'en'|'de';scenario:Scenario;possession:Possession;insights:TacticalInsight[];at:number;player_id:number;player:Metrics;team:Metrics;comparison:({label:string}&Metrics)[]}
-export interface Explanation{language:'en'|'de';source:'deterministic'|'azure';text:string;event_ids:string[];at:number;player_id:number;notice?:string}
+export interface Analysis{session_id:string|null;language:'en'|'de';scenario:Scenario;possession:Possession;insights:TacticalInsight[];at:number;player_id:number;player:Metrics;team:Metrics;comparison:({label:string}&Metrics)[]}
+export interface Explanation{session_id:string|null;language:'en'|'de';source:'deterministic'|'azure';text:string;event_ids:string[];at:number;player_id:number;notice?:string}
 export function formatTime(t:number,start=62){return `${start+Math.floor(t/60)}:${Math.floor(t%60).toString().padStart(2,'0')}`}
 

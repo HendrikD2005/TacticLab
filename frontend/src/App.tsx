@@ -5,6 +5,7 @@ import {Button} from '@/components/ui/button';
 import TacticalInsights from '@/components/TacticalInsights';
 import Pitch,{type PitchApi} from '@/components/Pitch';
 import {Playback} from '@/lib/playback';
+import {LiveFeed,noSubscribe,offlineSnapshot} from '@/lib/live';
 import {useAnalysis} from '@/hooks/useAnalysis';
 import {formatTime,type Match,type Scene,type Mode,type Layer,type Explanation,type TacticalInsight,type Scenario} from '@/lib/types';
 const Comparison=lazy(()=>import('@/components/Comparison'));
@@ -12,20 +13,40 @@ const Comparison=lazy(()=>import('@/components/Comparison'));
 export default function App(){
  const {t}=useI18n();
  const [scenario,setScenario]=useState<Scenario>('standard');
+ const [source,setSource]=useState<'replay'|'live'>('replay');
+ const [feed,setFeed]=useState<LiveFeed|null>(null);
  const [scene,setScene]=useState<Scene|null>(null),[error,setError]=useState(''),[retry,setRetry]=useState(0);
- useEffect(()=>{const controller=new AbortController();setError('');fetch(`/api/match?scenario=${scenario}`,{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error('Match API unavailable');return r.json() as Promise<Match>}).then(match=>setScene({match,positions:new Float32Array(match.positions.flat(2)),ball:new Float32Array(match.ball.flat())})).catch(e=>{if(e.name!=='AbortError')setError('failed');});return()=>controller.abort()},[retry,scenario]);
+ const sessionKey=useMemo(()=>crypto.randomUUID(),[scenario,source,retry]);
+ useEffect(()=>{
+  const controller=new AbortController();setError('');
+  async function load(){
+   const response=source==='live'
+    ?await fetch('/api/live',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario,session_id:sessionKey}),signal:controller.signal})
+    :await fetch(`/api/match?scenario=${scenario}`,{signal:controller.signal});
+   if(!response.ok)throw new Error('Match API unavailable');
+   const payload=await response.json();if(controller.signal.aborted)return;
+   if(source==='live'){const next=new LiveFeed(payload.session_id,payload.match);setFeed(next);setScene(next.scene)}
+   else {const match=payload as Match;setFeed(null);setScene({match,positions:new Float32Array(match.positions.flat(2)),ball:new Float32Array(match.ball.flat())})}
+  }
+  load().catch(()=>{if(!controller.signal.aborted)setError('failed')});
+  return()=>controller.abort();
+ },[scenario,source,retry,sessionKey]);
  if(!scene)return <main className="startup"><span className="startup-logo">TacticLab</span><LanguagePicker/>{error?<><AlertCircle/><p role="alert">{t('error.match')}</p><Button onClick={()=>setRetry(r=>r+1)}>{t('retry')}</Button></>:<><LoaderCircle className="spin"/><p>{t('loading')}</p></>}</main>;
- return <Workspace key={scene.match.id} scene={scene} onScenario={value=>{setScene(null);setScenario(value)}}/>;
+ return <Workspace key={feed?.sessionId??scene.match.id} scene={scene} feed={feed} onRestart={()=>{setScene(null);setRetry(v=>v+1)}} onSource={value=>{if(value!==source){setScene(null);setSource(value)}}} onScenario={value=>{setScene(null);setScenario(value)}}/>;
 }
-function Workspace({scene,onScenario}:{scene:Scene;onScenario:(scenario:Scenario)=>void}){
+function Workspace({scene,feed,onScenario,onSource,onRestart}:{scene:Scene;feed:LiveFeed|null;onScenario:(scenario:Scenario)=>void;onSource:(source:'replay'|'live')=>void;onRestart:()=>void}){
  const {t,language,number,percent}=useI18n();
- const {match}=scene;const clock=useMemo(()=>new Playback(match.duration),[match.duration]);const playback=useSyncExternalStore(clock.subscribe,clock.getSnapshot);const second=Math.floor(playback.time);
+ const {match}=scene;const clock=useMemo(()=>feed?.clock??new Playback(match.duration),[match.duration,feed]);const playback=useSyncExternalStore(clock.subscribe,clock.getSnapshot);const second=Math.floor(playback.time);
+ const live=useSyncExternalStore(feed?.subscribe??noSubscribe,feed?.getSnapshot??offlineSnapshot);
+ useEffect(()=>{feed?.start();return()=>feed?.close()},[feed]);
  const [selected,setSelected]=useState(7),[mode,setMode]=useState<Mode>('analyst'),[layer,setLayer]=useState<Layer>('passes'),[follow,setFollow]=useState(false);
  const [activeId,setActiveId]=useState<string|null>(null),[insightFocus,setInsightFocus]=useState(false);
  const [theme,setTheme]=useState(()=>{try{return localStorage.getItem('tl-theme')==='light'?'light':'dark'}catch{return 'dark'}});
  const [explanation,setExplanation]=useState<Explanation|null>(null),[busy,setBusy]=useState(false),[explainError,setExplainError]=useState(''),[aiEnabled,setAiEnabled]=useState(false);
  const pitchApi=useRef<PitchApi|null>(null),request=useRef<AbortController|null>(null),cache=useRef(new Map<string,Explanation>());
- const {data,error}=useAnalysis(playback.time,selected,match.scenario);const p=match.players[selected],stats=data?.player;
+ // Finished sessions use the recorded analysis index, still bounded by the received clock.
+ const analysisSession=live.status==='complete'||live.status==='expired'?null:feed?.sessionId??null;
+ const {data,error}=useAnalysis(playback.time,selected,match.scenario,analysisSession);const p=match.players[selected],stats=data?.player;
  useEffect(()=>{document.documentElement.style.colorScheme=theme;try{localStorage.setItem('tl-theme',theme)}catch{}},[theme]);
  useEffect(()=>{const ctrl=new AbortController();fetch('/api/health',{signal:ctrl.signal}).then(r=>r.json()).then(d=>setAiEnabled(d.ai_enabled)).catch(()=>{});return()=>ctrl.abort()},[]);
  useEffect(()=>{request.current?.abort();setBusy(false);setExplanation(null);setExplainError('')},[second,selected,language]);
@@ -33,7 +54,7 @@ function Workspace({scene,onScenario}:{scene:Scene;onScenario:(scenario:Scenario
  async function explain(question:'player'|'pressing'|'compare'){
    if(playback.playing)clock.toggle();const at=Math.floor(clock.position());const key=`${at}/${selected}/${language}/${question}`;setExplainError('');const existing=cache.current.get(key);if(existing){setExplanation(existing);return}
    request.current?.abort();const ctrl=new AbortController();request.current=ctrl;setBusy(true);setExplanation(null);
-   try{const response=await fetch('/api/explain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:match.scenario,at,player_id:selected,question,language}),signal:ctrl.signal});if(!response.ok)throw new Error('Explanation unavailable');const answer=await response.json() as Explanation;if(ctrl.signal.aborted)return;cache.current.set(key,answer);if(cache.current.size>80)cache.current.delete(cache.current.keys().next().value!);setExplanation(answer)}catch(e){if(!ctrl.signal.aborted)setExplainError('failed')}finally{if(!ctrl.signal.aborted)setBusy(false)}
+   try{const response=await fetch('/api/explain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:analysisSession,scenario:match.scenario,at,player_id:selected,question,language}),signal:ctrl.signal});if(!response.ok)throw new Error('Explanation unavailable');const answer=await response.json() as Explanation;if(ctrl.signal.aborted)return;cache.current.set(key,answer);if(cache.current.size>80)cache.current.delete(cache.current.keys().next().value!);setExplanation(answer)}catch(e){if(!ctrl.signal.aborted)setExplainError('failed')}finally{if(!ctrl.signal.aborted)setBusy(false)}
  }
  const insights=useMemo(()=>data?.insights.filter(i=>!insightFocus||i.player_ids.includes(selected))??[],[data,insightFocus,selected]);
  const active=insights.find(i=>i.id===activeId)??null;
@@ -43,11 +64,13 @@ function Workspace({scene,onScenario}:{scene:Scene;onScenario:(scenario:Scenario
  const ratio=(n:number,d:number)=>d?percent(n/d*100):'—';
  return <div id="tl"><header><div className="brand"><span className="brandmark" aria-hidden>TL</span>TacticLab</div><span className="tag">{t('matchAnalysis')}</span><span className="topnote"><span className="statusdot"/>{t('syntheticMatch')}</span><LanguagePicker/><Button size="icon" variant="ghost" aria-label={theme==='dark'?t('lightTheme'):t('darkTheme')} onClick={()=>setTheme(t=>t==='dark'?'light':'dark')}>{theme==='dark'?<Sun/>:<Moon/>}</Button></header>
  <div className="matchbar"><div><div className="eyebrow" style={{marginBottom:10}}>{t('matchContext')}</div><div className="score"><span className="badge">NTH</span>Northbridge<strong>1–0</strong>Riverside<span className="badge away">RIV</span></div></div><label className="scenario-label">{t('scenario')}<select aria-label={t('matchScenario')} value={match.scenario} onChange={e=>onScenario(e.target.value as Scenario)}><option value="standard">{t('scenario.standard')}</option><option value="variation">{t('scenario.variation')}</option><option value="control">{t('scenario.control')}</option></select></label><div className="switch" aria-label={t('detailLevel')}><Button aria-pressed={mode==='analyst'} onClick={()=>setMode('analyst')}>{t('analyst')}</Button><Button aria-pressed={mode==='fan'} onClick={()=>setMode('fan')}>{t('fan')}</Button></div></div>
+ <div className="sourcebar"><div className="switch" aria-label={t('source')}><Button aria-pressed={!feed} onClick={()=>onSource('replay')}>{t('recordedReplay')}</Button><Button aria-pressed={!!feed} onClick={()=>onSource('live')}>{t('liveSimulation')}</Button></div><span className="muted">{t(feed?'liveSourceNote':'replaySourceNote')}</span></div>
  <div className="layout"><main className="workspace"><div className="pitchtools"><div className="group" aria-label={t('layers')}>{([['passes','passes'],['pressure','pressure'],['runs','runs']] as const).map(([value,label])=><Button key={value} aria-pressed={layer===value} onClick={()=>setLayer(layer===value?'none':value)}>{t(label)}</Button>)}</div><div className="group"><Button size="icon" aria-label={t('zoomOut')} onClick={()=>pitchApi.current?.zoomOut()}><Minus/></Button><Button size="icon" aria-label={t('zoomIn')} onClick={()=>pitchApi.current?.zoomIn()}><Plus/></Button><Button onClick={()=>pitchApi.current?.reset()}><RotateCcw/>{t('wholePitch')}</Button></div></div>
  <div className="pitchbox"><div className="pitchhead"><span>{t('attackDirection')}</span><span>{follow?t('playerFocus'):active?t('markedPass'):t('buildUp')}</span></div><Pitch scene={scene} clock={clock} selected={selected} insight={active} layer={layer} follow={follow} onSelect={setSelected} onManual={()=>setFollow(false)} api={pitchApi}/></div>
  <div className="possession-strip" aria-label={t('possession')} data-testid="possession"><span>{t('possession')} <strong>{possessionLabel}</strong></span><span>{possession?.status==='in_flight'?t('inFlight'):possession?.player_id!=null?match.players.find(p=>p.id===possession.player_id)?.name:t('uncontrolled')}</span>{possession?.team&&<span>{t('phase',{phase:possession.phase_id,seconds:Math.round(possession.duration)})}</span>}</div>
  <div className="legend"><span><i className="dot"/>Northbridge</span><span><i className="dot blue"/>Riverside</span><span className="muted">{t('selection',{name:p.name.split(' ').at(-1)??p.name,number:p.number})}</span></div>
- <div className="replay"><div className="transport"><Button variant="primary" size="icon" onClick={clock.toggle} aria-label={playback.playing?t('pause'):t('play')}>{playback.playing?<Pause/>:<Play/>}</Button><span className="clock" data-testid="clock">{formatTime(playback.time)}</span><span className="muted">/ {formatTime(match.duration)}</span><label className="speed-label">{t('speed')}<select aria-label={t('playbackSpeed')} value={playback.speed} onChange={e=>clock.setSpeed(Number(e.target.value))}><option value="0.5">{number(0.5)}×</option><option value="1">{t('realTime')}</option><option value="2">2×</option><option value="4">4×</option></select></label></div><input className="range" type="range" min={0} max={match.duration} step={.1} value={playback.time} onChange={e=>clock.seek(Number(e.target.value))} aria-label={t('matchTime')}/><div className="ticks">{[0,15,30,45,60].map(t=><span key={t}>{formatTime(t)}</span>)}</div></div>
+ {feed&&<div className="live-status" data-testid="live-status" data-status={live.status}><div className="live-summary"><strong className={live.status==='receiving'?'receiving':''}>{t(`feed.${live.status}`)}</strong><span>{t('receivedAt',{time:formatTime(live.received)})} · <span data-testid="received-events">{t('receivedEvents',{count:live.events})}</span></span></div><div className="live-actions"><span data-testid="view-mode">{t(playback.following?'followingLive':'bufferedReplay',{seconds:Math.max(0,live.received-playback.time)})}</span>{!playback.ended&&<Button disabled={playback.following||live.status==='expired'} onClick={clock.backToLive}>{t('backToLive')}</Button>}{(live.status==='reconnecting'||live.status==='failed')&&<Button onClick={feed.retry}>{t('reconnect')}</Button>}{(live.status==='expired'||live.status==='complete')&&<Button onClick={onRestart}>{t('newSimulation')}</Button>}</div><div className="live-note">{t(live.status==='expired'?'expiredNote':'liveReplayNote')}</div></div>}
+ <div className="replay"><div className="transport"><Button variant="primary" size="icon" onClick={clock.toggle} aria-label={playback.playing?t('pause'):t('play')}>{playback.playing?<Pause/>:<Play/>}</Button><span className="clock" data-testid="clock">{formatTime(playback.time)}</span><span className="muted">/ {formatTime(feed?playback.available:match.duration)}</span><label className="speed-label">{t('speed')}<select aria-label={t('playbackSpeed')} disabled={!!feed&&playback.following} value={playback.speed} onChange={e=>clock.setSpeed(Number(e.target.value))}><option value="0.5">{number(0.5)}×</option><option value="1">{t('realTime')}</option><option value="2">2×</option><option value="4">4×</option></select></label></div><input className="range" type="range" min={0} max={playback.available} disabled={playback.available===0} step={.1} value={playback.time} onChange={e=>clock.seek(Number(e.target.value))} aria-label={t('matchTime')}/><div className="ticks">{(feed?[0,playback.available/2,playback.available]:[0,match.duration/4,match.duration/2,match.duration*.75,match.duration]).map((time,index)=><span key={index}>{formatTime(time)}</span>)}</div></div>
  <TacticalInsights insights={insights} active={active} mode={mode} players={match.players} focused={insightFocus} onFocus={()=>setInsightFocus(v=>!v)} onSelect={inspect} onClear={()=>setActiveId(null)}/>
  <div className="method-note">{t('method')}</div>
  </main><aside aria-label={t('playerAnalysis')}><div className="sidehead">{t('playerFocus')}<span>{t('upTo',{time:formatTime(data?.at??second)})}</span></div><div className="profile"><div className="playerline" aria-live="polite"><div className="jersey" style={{background:p.team==='away'?'#165de0':'var(--green)'}}>{p.number}</div><div><strong>{p.name}</strong><span className="muted">{t(`role.${p.role}`)} · {p.team==='home'?'NTH':'RIV'}</span></div></div><select aria-label={t('selectPlayer')} value={selected} onChange={e=>setSelected(Number(e.target.value))}>{match.players.map(player=><option key={player.id} value={player.id}>{player.number} · {player.name} · {player.team==='home'?'NTH':'RIV'}</option>)}</select>

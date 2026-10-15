@@ -1,3 +1,4 @@
+from uuid import UUID, uuid4
 from typing import Literal
 from pydantic import BaseModel, Field
 
@@ -37,7 +38,12 @@ class Match(BaseModel):
     ball: list[list[float]]
     events: list[Event]
 
+class LiveRequest(BaseModel):
+    scenario: Literal['standard', 'variation', 'control'] = 'standard'
+    session_id: UUID = Field(default_factory=uuid4)
+
 class AnalysisRequest(BaseModel):
+    session_id: UUID | None = None
     scenario: Literal['standard', 'variation', 'control'] = 'standard'
     at: float = Field(ge=0, le=60)
     player_id: int = Field(ge=0, le=21)
