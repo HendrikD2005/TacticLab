@@ -10,7 +10,7 @@ from .models import AnalysisRequest
 
 ROOT=Path(__file__).resolve().parents[2]
 load_dotenv(ROOT/'.env')
-app=FastAPI(title='Tactical Lab API',version='0.1.0')
+app=FastAPI(title='TacticLab API',version='0.1.0')
 match=generate_match()
 
 @app.get('/api/health')

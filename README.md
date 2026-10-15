@@ -1,4 +1,4 @@
-# Tactical Lab
+# TacticLab
 
 A football tactics workspace built for the Inside the Game hackathon. The first vertical slice combines an interactive Canvas pitch, a time-synchronised replay, real event-derived statistics and a server-side analysis assistant. All teams, players and data are synthetic.
 
@@ -53,8 +53,8 @@ Local browser tests use installed Microsoft Edge; CI installs Chromium. Test art
 npm run build
 .venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
 # Or, with Docker installed:
-docker build -t tactical-lab .
-docker run --rm -p 8000:8000 tactical-lab
+docker build -t tacticlab .
+docker run --rm -p 8000:8000 tacticlab
 ```
 
 FastAPI serves `frontend/dist` after a build. Azure Container Apps can run this image later; hosting is intentionally not provisioned. Never expose the development servers publicly.

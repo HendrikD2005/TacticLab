@@ -1,5 +1,5 @@
 {
-  "name": "tactical-lab", "version": "0.1.0", "private": true,
+  "name": "tacticlab", "version": "0.1.0", "private": true,
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "npm --prefix frontend run build",
