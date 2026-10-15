@@ -24,7 +24,11 @@ React 19, TypeScript, Vite, Tailwind CSS 4, shadcn-style locally owned Button co
 
 ## Implemented
 
+- Fluent-inspired navigation, command bar and consistent controls in light/dark themes.
 - 22 selectable players; zoom, drag, player following and camera reset.
+- Searchable event explorer with team, result, pressure and selected-player filters.
+- Browser-local scene notebook with tactical notes and timestamped JSON report export.
+- Five-second replay stepping and keyboard controls (Space, Left/Right outside inputs).
 - Three seeded one-minute synthetic replays with continuous possession, interpolation, seek and 0.5/1/2/4x playback.
 - Live simulation: 10 Hz tracking and completed events over SSE, a growing replay buffer, pause/rewind while receiving, reconnect and return to live.
 - Player/period filters; pass accuracy, progressive passes and pressure-related metrics computed on the server.
@@ -42,6 +46,16 @@ Select **Live simulation** above the pitch. Each session releases a synthetic 60
 Pause, seek or select a tactical finding to inspect received history while the stream continues. **Back to live** follows the newest received frames again at 1x. Replay speeds apply only to your view, never to the broadcaster. Connection recovery resumes after the last accepted frame without discarding your replay position. At completion, the full buffer remains available; **New simulation** starts a new session. Changing scenario or source starts a fresh workspace.
 
 The live feed is a paced simulation of the seeded fixtures, not an external match feed. It requires no paid services. Sessions are held in one backend process, capped at 64 and expire after 10 minutes. A server restart expires live sessions; received browser data remains usable for replay and analysis. Reloading the page discards the browser buffer. Production scaling would need shared session state or sticky routing, plus deployment-level connection limits.
+
+## Analysis workspace
+
+Use **Events** in the navigation to search player names or event IDs and filter by team, result or pressure. The list contains completed events up to your current replay time. Selecting a row pauses at that event, selects its player and returns to the pitch. Switching workspace sections preserves the Canvas camera and live stream.
+
+**Save moment** pauses the view and opens a note for the current time/player. Saved scenes reopen their player and any selected tactical finding. Notes are stored in this browser per match/scenario, capped at 100 scenes with 1,000 characters each. They are not synced to GitHub or a server. If browser storage is unavailable, a notice explains that notes survive only in memory until reload. In a new live session, saved future scenes remain locked until their frames arrive.
+
+**Export report** downloads JSON with the current analysis, completed events and saved notes up to the selected time. Future events/notes are excluded even when the full recorded fixture is loaded. Reports use schema version 1 and identify all data as synthetic; note text is exported as entered. Export is available when analysis for the current replay second is ready.
+
+**Space** toggles playback and **Left/Right** seek five seconds; keyboard shortcuts leave text fields, buttons and native controls alone. Both shortcuts and toolbar steps respect the live buffer boundary.
 
 ## Optional Azure / Foundry
 

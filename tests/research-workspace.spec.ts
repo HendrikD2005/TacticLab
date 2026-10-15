@@ -1,0 +1,97 @@
+import {test,expect} from '@playwright/test';
+import {readFile} from 'node:fs/promises';
+
+test('event search, result filters and player focus inspect received evidence without resetting the camera',async({page})=>{
+ await page.goto('/');await page.getByLabel('Match time',{exact:true}).fill('20');
+ await page.getByRole('button',{name:'Zoom in',exact:true}).click();
+ const canvas=await page.locator('canvas').elementHandle();
+ const zoom=await page.locator('canvas').evaluate(el=>(el as HTMLCanvasElement & {__zoom:{k:number}}).__zoom.k);
+ await page.getByRole('navigation').getByRole('button',{name:'Events',exact:true}).click();
+ const fixture=await (await page.request.get('/api/match')).json();
+ const seen=fixture.events.filter((e:{time:number})=>e.time<=20);
+ await expect(page.getByTestId('event-row')).toHaveCount(seen.length);
+ await page.getByLabel('Search player or event ID').fill('Finn Roth');
+ await expect(page.getByTestId('event-row')).not.toHaveCount(0);
+ for(const row of await page.getByTestId('event-row').all())await expect(row).toContainText('Finn Roth');
+ await page.getByLabel('Search player or event ID').fill('');
+ await page.getByLabel('Filter by result').selectOption('pressure');
+ await expect(page.getByTestId('event-row')).toHaveCount(seen.filter((e:{under_pressure:boolean})=>e.under_pressure).length);
+ await page.getByTestId('event-row').last().click();
+ await expect(page.getByTestId('clock')).toHaveText('62:07');
+ await expect(page.getByLabel('Select player')).toHaveValue('5');
+ await page.getByLabel('Match time',{exact:true}).fill('0');
+ await expect(page.getByTestId('event-row')).toHaveCount(0);
+ expect(await canvas!.evaluate(el=>el.isConnected)).toBeTruthy();
+ expect(await page.locator('canvas').evaluate(el=>(el as HTMLCanvasElement & {__zoom:{k:number}}).__zoom.k)).toBe(zoom);
+});
+
+test('notebook persists scenes, isolates scenarios and exports only the viewed history',async({page})=>{
+ await page.goto('/');await page.getByLabel('Match time',{exact:true}).fill('9');
+ await page.getByRole('button',{name:/62:07.*Pressure escape/}).click();
+ await page.getByRole('button',{name:'Save moment',exact:true}).click();
+ await page.getByLabel('Your observation').fill('Receiver escapes pressure on the right.');
+ await page.getByRole('button',{name:'Save scene',exact:true}).click();
+ await expect(page.locator('.saved-scene')).toHaveCount(1);
+ const downloaded=page.waitForEvent('download');
+ await page.getByRole('button',{name:'Export report',exact:true}).click();
+ const report=JSON.parse(await readFile((await (await downloaded).path())!,'utf8'));
+ expect(report.replay_time).toBe(9);expect(report.analysis.at).toBe(9);
+ expect(report.match.players.find((p:{id:number})=>p.id===7).name).toBe('Elias Berg');
+ expect(report.events.every((e:{time:number})=>e.time<=9)).toBeTruthy();
+ expect(report.saved_scenes[0].text).toContain('Receiver escapes');
+ await page.reload();
+ await page.getByRole('navigation').getByRole('button',{name:'Notebook',exact:true}).click();
+ await expect(page.locator('.saved-scene')).toHaveCount(1);
+ await page.locator('.scene-open').click();
+ await expect(page.getByTestId('clock')).toHaveText('62:09');
+ await expect(page.locator('canvas')).toHaveAttribute('data-insight','escape-e2');
+ await page.getByLabel('Match time',{exact:true}).fill('0');
+ const earlierDownload=page.waitForEvent('download');
+ await page.getByRole('button',{name:'Export report',exact:true}).click();
+ const earlier=JSON.parse(await readFile((await (await earlierDownload).path())!,'utf8'));
+ expect(earlier.events).toEqual([]);expect(earlier.saved_scenes).toEqual([]);expect(earlier.analysis.insights).toEqual([]);
+ await page.getByLabel('Match scenario').selectOption('control');
+ await page.getByRole('navigation').getByRole('button',{name:'Notebook',exact:true}).click();
+ await expect(page.locator('.saved-scene')).toHaveCount(0);
+ await page.getByLabel('Match scenario').selectOption('standard');
+ await page.getByRole('navigation').getByRole('button',{name:'Notebook',exact:true}).click();
+ await page.getByRole('button',{name:'Delete scene at 62:09',exact:true}).click();
+ await expect(page.locator('.saved-scene')).toHaveCount(0);
+});
+
+test('live navigation preserves the stream and future saved scenes stay locked',async({page})=>{
+ await page.goto('/');await page.getByLabel('Match time',{exact:true}).fill('40');
+ await page.getByRole('button',{name:'Save moment',exact:true}).click();
+ await page.getByLabel('Your observation').fill('Future note must remain hidden');
+ await page.getByRole('button',{name:'Save scene',exact:true}).click();
+ await page.getByRole('button',{name:'Live simulation',exact:true}).click();
+ await expect(page.getByTestId('live-status')).toHaveAttribute('data-status','receiving');
+ const canvas=await page.locator('canvas').elementHandle();
+ await page.getByRole('navigation').getByRole('button',{name:'Notebook',exact:true}).click();
+ await expect(page.locator('.scene-open')).toBeDisabled();
+ await expect(page.getByText('Future note must remain hidden')).toHaveCount(0);
+ await expect(page.getByTestId('view-mode')).toHaveText('LIVE');
+ await page.getByRole('navigation').getByRole('button',{name:'Events',exact:true}).click();
+ await expect.poll(async()=>Number(await page.getByLabel('Match time',{exact:true}).getAttribute('max'))).toBeGreaterThan(2);
+ expect(await canvas!.evaluate(el=>el.isConnected)).toBeTruthy();
+ await page.setViewportSize({width:360,height:900});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ await page.getByLabel('Language',{exact:true}).selectOption('de');
+ await expect(page.getByRole('heading',{name:'Ereignisse',exact:true})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+});
+
+test('notes survive unavailable storage in memory and editing never triggers replay shortcuts',async({page})=>{
+ await page.addInitScript(()=>{Storage.prototype.getItem=()=>{throw new Error('disabled')};Storage.prototype.setItem=()=>{throw new Error('disabled')}});
+ await page.goto('/');await page.getByLabel('Match time',{exact:true}).fill('9');
+ await page.getByRole('button',{name:'Save moment',exact:true}).click();
+ await expect(page.getByText(/Browser storage is unavailable/)).toBeVisible();
+ await page.getByLabel('Your observation').pressSequentially('Player turns');
+ await page.getByLabel('Your observation').press('ArrowRight');
+ await expect(page.getByTestId('clock')).toHaveText('62:09');
+ await expect(page.getByRole('button',{name:'Play replay',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Save scene',exact:true}).click();
+ await expect(page.locator('.saved-scene')).toContainText('Player turns');
+ await page.getByRole('button',{name:'Forward 5 seconds',exact:true}).click();
+ await expect(page.getByTestId('clock')).toHaveText('62:14');
+});
