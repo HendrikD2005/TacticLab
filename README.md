@@ -4,16 +4,17 @@ A football tactics workspace built for the Inside the Game hackathon. The first 
 
 ## Run locally
 
-Requires Node.js 24 LTS and Python 3.12/3.13. On Windows:
+Requires Node.js 24 LTS and Python 3.12/3.13. Run these commands from the repository root (the folder containing `package.json`). The checkout can live anywhere and have any folder name. On Windows:
 
 ```powershell
-cd 'C:\Softwareentwicklung\Projekte\Inside The Game Hackathon'
 # Only for initial setup or dependency changes:
-.\scripts\setup.ps1 -Python 'path\to\python.exe'
+.\scripts\setup.ps1
 npm run dev
 ```
 
-The local environment is already installed on this machine. Open http://127.0.0.1:5173. Backend: http://127.0.0.1:8000; OpenAPI docs: http://127.0.0.1:8000/docs. Stop both servers with Ctrl+C. Restart the backend after Python edits (the small dev runner deliberately avoids a reload subprocess).
+If `python` is not on your PATH, pass `-Python` with your Python executable to the setup script. Open http://127.0.0.1:5173. Backend: http://127.0.0.1:8000; OpenAPI docs: http://127.0.0.1:8000/docs. Stop both servers with Ctrl+C. Restart the backend after Python edits (the small dev runner deliberately avoids a reload subprocess).
+
+After moving a checkout, recreate `.venv` with your chosen Python interpreter and reinstall `backend/requirements.lock`; virtual environments contain machine-specific paths and are not portable. These generated files are excluded from Git. Application paths resolve relative to the repository, not to a fixed machine location.
 
 Linux/macOS: create `.venv`, install `backend/requirements.lock`, run `npm ci` and `npm --prefix frontend ci`, then `npm run dev`.
 
@@ -69,5 +70,5 @@ FastAPI serves `frontend/dist` after a build. Azure Container Apps can run this 
 - `docs/architecture.md`: decisions, performance targets and limitations.
 - `docs/metrics.md`: metric definitions and synthetic data assumptions.
 
-This is the foundation, not a completed hackathon submission. A broader scenario generator, more rigorous pressing/sequence detection, calibrated metrics, live streaming, structured AI validation and the final submission assets remain to be built. No remote repository or licence has been selected yet.
+This is the foundation, not a completed hackathon submission. A broader scenario generator, more rigorous pressing/sequence detection, calibrated metrics, live streaming, structured AI validation and the final submission assets remain to be built. No licence has been selected yet.
 
