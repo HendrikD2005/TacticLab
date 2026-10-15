@@ -1,0 +1,2 @@
+import {defineConfig,devices} from '@playwright/test';
+export default defineConfig({testDir:'./tests',outputDir:'artifacts/test-results',reporter:'list',use:{baseURL:'http://127.0.0.1:5173',...devices['Desktop Chrome'],channel:process.env.CI?undefined:'msedge',screenshot:'only-on-failure',trace:'retain-on-failure'},webServer:{command:'npm run dev',url:'http://127.0.0.1:5173',reuseExistingServer:!process.env.CI,timeout:60000}});

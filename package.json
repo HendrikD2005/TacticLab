@@ -1,0 +1,11 @@
+{
+  "name": "tactical-lab", "version": "0.1.0", "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm --prefix frontend run build",
+    "typecheck": "npm --prefix frontend run typecheck",
+    "test:e2e": "playwright test",
+    "check": "npm run typecheck && npm run build"
+  },
+  "devDependencies": { "@playwright/test": "^1.56.0" }
+}
