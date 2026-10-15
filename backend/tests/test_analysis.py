@@ -15,8 +15,8 @@ def test_fixture_is_reproducible_and_in_bounds():
 def test_analysis_never_looks_ahead():
     assert metrics(match,3)['attempts']==0
     assert metrics(match,4)['attempts']==1
-    assert snapshot(match,13,7)['sequences']==[]
-    assert len(snapshot(match,14,7)['sequences'])==1
+    assert snapshot(match,8,7)['insights']==[]
+    assert len(snapshot(match,9,7)['insights'])==1
     before=metrics(match,9,7)
     assert before['attempts']==0
     assert before['accuracy'] is None
@@ -28,13 +28,13 @@ def test_player_and_window_filtering():
     assert full['completed']==4
     assert metrics(match,60,7,start=40)['attempts']==1
     a,b=snapshot(match,60,7)['comparison']
-    assert a['attempts']+b['attempts']==metrics(match,60)['attempts']
+    assert a['attempts']+b['attempts']==metrics(match,60,team='home')['attempts']
 
 def test_turnover_and_metrics():
     m=metrics(match,52,10)
     assert m['attempts']==1 and m['completed']==0 and m['accuracy']==0
-    assert metrics(match,60)['attempts']==14
-    assert metrics(match,60)['completed']==13
+    assert metrics(match,60)['attempts']==17
+    assert metrics(match,60)['completed']==15
 
 @pytest.mark.parametrize('query',['at=-1','at=999','player_id=22','at=nan'])
 def test_invalid_queries(query):

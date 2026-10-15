@@ -5,6 +5,7 @@ import time
 from collections import deque
 import httpx
 from .analysis import snapshot
+from .intelligence import MatchIntelligence
 from .models import AnalysisRequest, Match
 
 calls: deque[float] = deque()
@@ -13,8 +14,8 @@ lock=asyncio.Lock()
 def configured() -> bool:
     return os.getenv('AI_ENABLED','false').lower()=='true' and all(os.getenv(k) for k in ['AZURE_AI_BASE_URL','AZURE_AI_API_KEY','AZURE_AI_DEPLOYMENT'])
 
-async def explain(match: Match, request: AnalysisRequest) -> dict:
-    facts=snapshot(match,request.at,request.player_id)
+async def explain(match: Match, request: AnalysisRequest, intelligence: MatchIntelligence | None = None) -> dict:
+    facts=snapshot(match,request.at,request.player_id,intelligence)
     player=match.players[request.player_id]
     m=facts['player'] if request.question=='player' else facts['team']
     if request.language=='de':
@@ -25,6 +26,20 @@ async def explain(match: Match, request: AnalysisRequest) -> dict:
     if request.question=='compare':
         a,b=facts['comparison']
         result['text']=(f"Erste Hälfte: {a['completed']}/{a['attempts']} Pässe, {a['progressive']} progressiv. Zweite Hälfte: {b['completed']}/{b['attempts']} Pässe, {b['progressive']} progressiv. Kleine synthetische Stichprobe; keine Aussage über taktische Kausalität." if request.language=='de' else f"First half: {a['completed']}/{a['attempts']} passes, {a['progressive']} progressive. Second half: {b['completed']}/{b['attempts']} passes, {b['progressive']} progressive. Small synthetic sample; this does not establish tactical causality.")
+    if request.question=='pressing':
+        findings=[i for i in facts['insights'] if i['team']==player.team]
+        if findings:
+            latest=findings[-1]
+            result['text']=latest['explanation'] if request.language=='de' else (
+                f"The latest confirmed escape gained {latest['evidence']['gain_m']} m. "
+                f"Nearest-opponent distance increased from {latest['evidence']['pressure_before_m']} "
+                f"to {latest['evidence']['space_after_m']} m; "
+                f"{latest['evidence']['bypassed']} pressing opponents were bypassed. "
+                'Team control was confirmed two seconds later. This is a synthetic, rule-based finding.')
+            result['event_ids']=latest['event_ids']
+        else:
+            result['text']=('Bis zu diesem Zeitpunkt ist für das ausgewählte Team kein Pressingdurchbruch nach unserer Regel bestätigt.' if request.language=='de' else 'No pressure escape has been confirmed for the selected team at this time under our detection rule.')
+            result['event_ids']=[]
     if not configured(): return result
     async with lock:
         now=time.monotonic()

@@ -1,8 +1,8 @@
 // The renderer reads the clock directly; React subscribers update at most 10 Hz.
 export class Playback {
-  private time=14;private started=0;private active=false;private rate=1;private lastNotify=0;
+  private time=0;private started=0;private active=false;private rate=1;private lastNotify=0;
   private listeners=new Set<()=>void>();
-  private snapshot={time:14,playing:false,speed:1};
+  private snapshot={time:0,playing:false,speed:1};
   constructor(readonly duration:number){}
   position=()=>Math.min(this.duration,this.time+(this.active?(performance.now()-this.started)/1000*this.rate:0));
   getSnapshot=()=>this.snapshot;

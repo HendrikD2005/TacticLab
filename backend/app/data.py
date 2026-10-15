@@ -1,6 +1,6 @@
 """Seeded synthetic tracking with bounded player acceleration and timed passes."""
 import numpy as np
-from .models import Match, Player, Event, Sequence
+from .models import Match, Player, Event
 
 HOME = [(7,34),(25,12),(22,27),(23,46),(28,59),(40,29),(50,9),(45,43),(76,32),(60,27),(65,58)]
 AWAY = [(98,34),(80,10),(85,26),(84,44),(78,59),(65,20),(65,45),(56,33),(39,19),(38,47),(31,33)]
@@ -32,21 +32,22 @@ def generate_match(seed: int = 42) -> Match:
         velocity+=acceleration/SAMPLE_HZ
         positions[k]=positions[k-1]+velocity/SAMPLE_HZ
     players=[Player(id=i,number=NUMBERS[i%11],name=name,team='home' if i<11 else 'away',role='Torwart' if i%11==0 else 'Abwehr' if i%11<5 else 'Mittelfeld' if i%11<8 else 'Angriff') for i,name in enumerate(NAMES)]
-    routes=[(4,2,5,True,'s1'),(7,5,7,True,'s1'),(10,7,9,True,'s1'),(14,9,8,True,'s1'),(20,3,7,True,'s2'),(23,7,10,True,'s2'),(26,10,4,False,'s2'),(33,2,7,True,'s3'),(36,7,9,True,'s3'),(39,9,8,True,'s3'),(47,4,5,True,'s4'),(50,5,7,True,'s4'),(53,7,9,True,'s4'),(56,9,8,True,'s4')]
+    routes=[(4,2,5,True,'s1'),(7,5,7,True,'s1'),(10,7,9,True,'s1'),(14,9,8,True,'s1'),(18,8,3,True,'link1'),(20,3,7,True,'s2'),(23,7,10,True,'s2'),(26,10,4,False,'s2'),(30,17,2,False,'link2'),(33,2,7,True,'s3'),(36,7,9,True,'s3'),(39,9,8,True,'s3'),(44,8,4,True,'link3'),(47,4,5,True,'s4'),(50,5,7,True,'s4'),(53,7,9,True,'s4'),(56,9,8,True,'s4')]
     events=[]
     def at(t,player):
         ix=np.clip(t*SAMPLE_HZ,0,len(times)-1);lo=int(ix);hi=min(lo+1,len(times)-1)
         return positions[lo,player]*(1-(ix-lo))+positions[hi,player]*(ix-lo)
     for k,(t,p,target_id,success,seq) in enumerate(routes):
-        receiver=target_id if success else 17
+        receiver=target_id if success or p>=11 else 17
         end=at(t,receiver);duration=1.0
         for _ in range(8):
             start=at(t-duration,p)
             duration=float(np.linalg.norm(end-start)/PASS_SPEED)
         release=round(t-duration,4);start=at(release,p)
-        nearest=min(np.linalg.norm(at(release,i)-start) for i in range(11,22))
+        nearest=min(np.linalg.norm(at(release,i)-start) for i in (range(11,22) if p<11 else range(11)))
+        if events and release < events[-1].time:
+            raise ValueError('Overlapping passes in synthetic fixture')
         events.append(Event(id=f'e{k+1}',time=t,release_time=release,type='pass',player_id=p,target_id=receiver,x=round(float(start[0]),3),y=round(float(start[1]),3),end_x=round(float(end[0]),3),end_y=round(float(end[1]),3),success=success,under_pressure=bool(nearest<=12),sequence_id=seq))
-    sequences=[Sequence(id='s1',start=2,end=14,title='Durch die Mitte',outcome='escape'),Sequence(id='s2',start=18,end=26,title='Am Flügel isoliert',outcome='turnover'),Sequence(id='s3',start=31,end=39,title='Dritter Spieler',outcome='escape'),Sequence(id='s4',start=45,end=56,title='Seite verlagert',outcome='escape')]
     balls=[]
     for t in times:
         previous=next((e for e in reversed(events) if e.time<=t),None)
@@ -56,13 +57,10 @@ def generate_match(seed: int = 42) -> Match:
             ball=np.array([upcoming.x,upcoming.y])*(1-f)+np.array([upcoming.end_x,upcoming.end_y])*f
         elif upcoming:
             holder=previous.target_id if previous else upcoming.player_id
-            if holder==upcoming.player_id: ball=at(t,holder)
-            else:
-                # Explicit synthetic transitions between independent sequences; no teleport.
-                start_t=previous.time if previous else 0
-                f=float(np.clip((t-start_t)/(upcoming.release_time-start_t),0,1))
-                ball=at(start_t,holder)*(1-f)+at(upcoming.release_time,upcoming.player_id)*f
+            if holder != upcoming.player_id:
+                raise ValueError('Passer must have received the preceding pass')
+            ball=at(t,holder)
         else: ball=at(t,previous.target_id)
         balls.append(np.round(ball,3).tolist())
-    return Match(id='northbridge-riverside',name='Northbridge – Riverside',duration=DURATION,start_minute=62,sample_hz=SAMPLE_HZ,players=players,times=np.round(times,3).tolist(),positions=np.round(positions,3).tolist(),ball=balls,events=events,sequences=sequences)
+    return Match(id=f'northbridge-riverside-{seed}',name='Northbridge – Riverside',duration=DURATION,initial_player_id=2,start_minute=62,sample_hz=SAMPLE_HZ,players=players,times=np.round(times,3).tolist(),positions=np.round(positions,3).tolist(),ball=balls,events=events)
 

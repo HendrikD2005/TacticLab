@@ -28,4 +28,22 @@ On 2026-10-15, a headless Edge sample of 180 animation frames with playback, pre
 
 ## Tempo and interface revision
 
-The baseline is preserved in commit ffecba1. Work continues on `codex/realistic-tempo-ui`. The frame clock still represents actual seconds at 1x; the fixture itself now contains active movement and distance-dependent passes. A central button system replaces competing generic button overrides. Pitch markers, match chrome, inspector and sequence rows use a restrained analysis-workspace hierarchy.
+The baseline is preserved in commit 80451aa. Work continues on `codex/realistic-tempo-ui`. The frame clock still represents actual seconds at 1x; the fixture itself now contains active movement and distance-dependent passes. A central button system replaces competing generic button overrides. Pitch markers, match chrome, inspector and sequence rows use a restrained analysis-workspace hierarchy.
+
+
+## Possession intelligence and tactical UI
+
+Each of the three seeded matches owns one `MatchIntelligence` index, built at process startup. It validates the ownership chain, indexes release/reception state transitions and derives confirmed single-pass pressure escapes from tracking geometry. Requests use binary search over timestamps; the detection work does not run once per player, browser frame or analysis request. The explanation adapter reuses the same index. Team metrics and comparisons use the selected player's team.
+
+The API never returns insights confirmed after the requested replay time. The frontend additionally rejects responses later than its current clock and clears historical markings when their insight is no longer visible. An explicit scenario switch remounts the workspace, cancels old requests and resets the clock and local caches. The complete replay fixture remains available to the browser; these guarantees are presentation semantics, not access control for a live feed.
+
+The timeline now contains calculated findings instead of annotated scenes. Selecting one pauses at confirmation time and draws a labelled historical pass trace with opponent evidence. Analyst mode includes numeric evidence and the detection rule; fan mode gives a concise explanation. Player-focus filtering narrows findings to those involving the selected passer or receiver. No animation frame waits for analysis or AI. Canvas receives a small overlay object and retains its existing renderer loop.
+
+Next: incremental ingestion/live transport, richer multi-pass patterns, structured model tool use and multilingual recaps. No paid AI service is needed for the current detector.
+
+
+## Validation of possession milestone
+
+31 backend tests cover independent synthetic positive examples, mirrored attack direction, pressure/space/progression counterexamples, loss and regain, confirmation delay, timeline rewind, five generator seeds and index reuse. Four browser tests cover the existing workflow plus scene evidence, historical canvas marking, fan mode, player filtering and scenario isolation. TypeScript and production build pass.
+
+A local 180-frame Edge sample with the insight overlay, pressure layer and zoom measured median 16.7 ms, p95 17.1 ms, with no frames above 33.4 ms. This short sample is not a cross-device guarantee. Screenshot inspection includes desktop dark/light and a 360 px mobile layout. Camera resize preserves the field point at the viewport centre.

@@ -25,9 +25,10 @@ React 19, TypeScript, Vite, Tailwind CSS 4, shadcn-style locally owned Button co
 ## Implemented
 
 - 22 selectable players; zoom, drag, player following and camera reset.
-- One-minute deterministic synthetic replay with interpolation, seek and 0.5/1/2/4x playback.
+- Three seeded one-minute synthetic replays with continuous possession, interpolation, seek and 0.5/1/2/4x playback.
 - Player/period filters; pass accuracy, progressive passes and pressure-related metrics computed on the server.
-- Three visual layers; completed sequence navigation; fan and analyst modes; light/dark themes.
+- Three visual layers; automatically detected pressure escapes with historical pitch evidence, player filtering, distinct fan/analyst views and light/dark themes.
+- Explicit possession phases and a two-second confirmation delay; discoveries disappear when scrubbing before their confirmation.
 - Guided analysis in German/English with clickable event evidence. Local calculated explanations cost nothing.
 - Optional Azure model wording adapter, disabled by default. It is not yet a multi-step tool-calling agent.
 - A single-container production build. No database, paid feed or cloud infrastructure is required to run locally.
@@ -70,5 +71,5 @@ FastAPI serves `frontend/dist` after a build. Azure Container Apps can run this 
 - `docs/architecture.md`: decisions, performance targets and limitations.
 - `docs/metrics.md`: metric definitions and synthetic data assumptions.
 
-This is the foundation, not a completed hackathon submission. A broader scenario generator, more rigorous pressing/sequence detection, calibrated metrics, live streaming, structured AI validation and the final submission assets remain to be built. No licence has been selected yet.
+This is the foundation, not a completed hackathon submission. A broader scenario generator, multi-pass tactical detection, calibrated metrics, live streaming, structured AI validation and the final submission assets remain to be built. No licence has been selected yet.
 

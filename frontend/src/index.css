@@ -23,3 +23,17 @@
 @media(max-width:480px){body{padding:0}#tl{border:0}#tl header{padding:0 14px}#tl .tag{display:none}#tl .matchbar{gap:15px;padding:17px 14px}#tl .score{font-size:13px;gap:6px}#tl .score strong{font-size:17px;letter-spacing:0;margin:0 2px}#tl .badge{font-size:8px;padding-left:4px}#tl .layout{padding:0 12px 16px}#tl .pitchhead{font-size:9px;padding:9px}#tl .legend{gap:10px}#tl .legend .muted{width:100%;margin-left:0}#tl .moment.ui-button{gap:12px}#tl .moment span{min-width:125px}#tl .method-note{font-size:10px}#tl footer{padding:10px 12px}}
 @media(pointer:coarse){.ui-button,#tl select{min-height:40px}#tl .range{height:7px}#tl select{font-size:16px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.spin{animation:none}}
+
+#tl .possession-strip{display:flex;flex-wrap:wrap;gap:8px 18px;padding:9px 0;border-bottom:1px solid var(--line);font-size:10px;color:var(--muted)}
+#tl .possession-strip strong{color:var(--text);font-weight:500;margin-left:7px}#tl .possession-strip span:last-child{margin-left:auto;font-variant-numeric:tabular-nums}
+#tl .insight-empty{padding:14px 0;color:var(--muted);font-size:11px;max-width:500px}
+#tl .moment .moment-gain{min-width:0;margin-left:auto;color:var(--green)}
+#tl .tactical-detail{margin-top:14px;border:1px solid var(--line);border-left:2px solid var(--green);padding:16px}
+#tl .detail-heading{display:flex;align-items:start;justify-content:space-between;gap:12px}#tl .tactical-detail h2{font-size:14px;font-weight:550;margin:5px 0 0}#tl .tactical-detail p{font-size:12px;line-height:1.7;margin:13px 0}
+#tl .evidence-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:14px 0}
+#tl .evidence-grid dt{font-size:10px;color:var(--muted)}#tl .evidence-grid dd{font-size:14px;margin:5px 0 0;font-variant-numeric:tabular-nums}#tl .tactical-detail summary{cursor:pointer;font-size:11px;color:var(--muted)}#tl .tactical-detail details p{font-size:11px;color:var(--muted)}
+#tl .overlay-key{font-size:10px;color:var(--muted);margin-top:13px}#tl .overlay-key i{display:inline-block;width:15px;height:2px;background:var(--green);vertical-align:middle;margin-right:6px}
+@media(max-width:600px){#tl .evidence-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#tl .tactical-detail{padding:12px}#tl .moment.ui-button{gap:8px;flex-wrap:wrap}#tl .moment span{min-width:90px}#tl .sectiontitle{flex-wrap:wrap}#tl .detail-heading{flex-wrap:wrap}}
+
+#tl .scenario-label{display:flex;align-items:center;gap:9px;margin-left:auto;color:var(--muted);font-size:11px}#tl .scenario-label select{width:115px}
+@media(max-width:600px){#tl .scenario-label{margin-left:0}}
