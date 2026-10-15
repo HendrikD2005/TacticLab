@@ -7,7 +7,7 @@ A football tactics workspace built for the Inside the Game hackathon. The first 
 Requires Node.js 24 LTS and Python 3.12/3.13. On Windows:
 
 ```powershell
-cd 'D:\dev\Inside The Game Hackathon'
+cd 'C:\Softwareentwicklung\Projekte\Inside The Game Hackathon'
 # Only for initial setup or dependency changes:
 .\scripts\setup.ps1 -Python 'path\to\python.exe'
 npm run dev
@@ -70,12 +70,4 @@ FastAPI serves `frontend/dist` after a build. Azure Container Apps can run this 
 - `docs/metrics.md`: metric definitions and synthetic data assumptions.
 
 This is the foundation, not a completed hackathon submission. A broader scenario generator, more rigorous pressing/sequence detection, calibrated metrics, live streaming, structured AI validation and the final submission assets remain to be built. No remote repository or licence has been selected yet.
-
-## Git on this D: volume
-
-This volume does not record ownership, so Git may require an explicit safe-directory exception. No global Git configuration was changed. A command-local option works without changing files outside this project:
-
-```powershell
-git -c safe.directory='D:/dev/Inside The Game Hackathon' status
-```
 
