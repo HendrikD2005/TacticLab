@@ -20,7 +20,7 @@ def health(): return {'status':'ok','ai_enabled':configured(),'data':'synthetic'
 def get_match(): return match
 
 @app.get('/api/analysis')
-def get_analysis(at: float=Query(0,ge=0,le=120),player_id: int=Query(7,ge=0,le=21)):
+def get_analysis(at: float=Query(0,ge=0,le=60),player_id: int=Query(7,ge=0,le=21)):
     return snapshot(match,at,player_id)
 
 @app.post('/api/explain')
@@ -31,3 +31,4 @@ if DIST.exists():
     app.mount('/assets',StaticFiles(directory=DIST/'assets'),name='assets')
     @app.get('/')
     def index(): return FileResponse(DIST/'index.html')
+

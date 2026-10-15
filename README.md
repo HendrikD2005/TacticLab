@@ -24,7 +24,7 @@ React 19, TypeScript, Vite, Tailwind CSS 4, shadcn-style locally owned Button co
 ## Implemented
 
 - 22 selectable players; zoom, drag, player following and camera reset.
-- Two-minute deterministic synthetic replay with interpolation, seek and 0.5/1/2x playback.
+- One-minute deterministic synthetic replay with interpolation, seek and 0.5/1/2/4x playback.
 - Player/period filters; pass accuracy, progressive passes and pressure-related metrics computed on the server.
 - Three visual layers; completed sequence navigation; fan and analyst modes; light/dark themes.
 - Guided analysis in German/English with clickable event evidence. Local calculated explanations cost nothing.
@@ -78,3 +78,4 @@ This volume does not record ownership, so Git may require an explicit safe-direc
 ```powershell
 git -c safe.directory='D:/dev/Inside The Game Hackathon' status
 ```
+

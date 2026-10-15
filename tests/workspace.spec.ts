@@ -1,8 +1,8 @@
 import {test,expect} from '@playwright/test';
 test('replay, real analytics, selection and free explanation',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
- await expect(page.getByRole('heading',{name:'Was zeigt das Spiel?'})).toBeVisible();
- await expect(page.getByTestId('progressive')).toHaveText('1');
+ await expect(page.getByRole('heading',{name:'Spielgeschehen einordnen'})).toBeVisible();
+ const initial=await (await page.request.get('/api/analysis?at=14&player_id=7')).json(); await expect(page.getByTestId('progressive')).toHaveText(String(initial.player.progressive));
  await page.getByRole('button',{name:'Hineinzoomen'}).click();
  await page.getByLabel('Spieler auswählen').selectOption('10');
  await expect(page.getByText('Nils Beck',{exact:true})).toBeVisible();
@@ -29,3 +29,5 @@ test('small screen and theme',async({page})=>{
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
  await page.getByRole('button',{name:'Helles Design'}).click();await expect(page.getByRole('button',{name:'Dunkles Design'})).toBeVisible();
 });
+
+

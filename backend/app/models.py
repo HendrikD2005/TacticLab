@@ -11,6 +11,7 @@ class Player(BaseModel):
 class Event(BaseModel):
     id: str
     time: float
+    release_time: float
     type: Literal['pass', 'turnover', 'shot']
     player_id: int
     target_id: int | None = None
@@ -43,7 +44,8 @@ class Match(BaseModel):
     sequences: list[Sequence]
 
 class AnalysisRequest(BaseModel):
-    at: float = Field(ge=0, le=120)
+    at: float = Field(ge=0, le=60)
     player_id: int = Field(ge=0, le=21)
     question: Literal['player', 'pressing', 'compare'] = 'pressing'
     language: Literal['de', 'en'] = 'de'
+
