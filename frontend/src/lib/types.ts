@@ -17,6 +17,6 @@ export type TacticalInsight=InsightBase & (
 );
 export interface Analysis{session_id:string|null;language:'en'|'de';scenario:Scenario;possession:Possession;insights:TacticalInsight[];at:number;player_id:number;player:Metrics;team:Metrics;comparison:({label:string}&Metrics)[]}
 export interface EvidenceScene{id:string;insight_id:string|null;at:number;start:number;end:number;title:string;reason:string;player_id:number;event_ids:string[]}
-export interface Explanation{scenes:EvidenceScene[];context:string;scope:string;topic:string;unsupported:boolean;scenario:Scenario;session_id:string|null;language:'en'|'de';source:'deterministic'|'azure';text:string;event_ids:string[];at:number;player_id:number;notice?:string}
+export interface Explanation{mode:Mode;scenes:EvidenceScene[];context:string;scope:string;topic:string;unsupported:boolean;scenario:Scenario;session_id:string|null;language:'en'|'de';source:'deterministic'|'azure';text:string;event_ids:string[];at:number;player_id:number;notice?:string}
 export function formatTime(t:number,start=62){return `${start+Math.floor(t/60)}:${Math.floor(t%60).toString().padStart(2,'0')}`}
 

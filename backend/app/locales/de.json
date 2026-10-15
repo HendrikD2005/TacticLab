@@ -33,5 +33,10 @@
   "assistant.overload": "lokale Überzahl",
   "assistant.pressing": "Pressingdurchbrüche",
   "assistant.shot": "Schuss",
-  "assistant.turnover": "Ballverlust"
+  "assistant.turnover": "Ballverlust",
+  "fan.pressing_escape": "Der Ball kommt aus der Nähe der Gegner heraus. So kann die Mannschaft mehr Zeit gewinnen, um den nächsten Angriff aufzubauen.",
+  "fan.switch_of_play": "Ein Pass auf die andere Seite kann einem Mitspieler mehr Platz geben, wenn es auf einer Seite eng wird. Daraus entsteht nicht automatisch eine Torchance.",
+  "fan.local_overload": "Mehr eigene Spieler in der Nähe können zusätzliche Anspielmöglichkeiten bieten. Ein Gegner kann den Passweg trotzdem blockieren.",
+  "fan.caution": "Dies ist ein kurzes simuliertes Spiel. Diese Szenen beweisen nicht, wie gut ein Team oder Spieler ist.",
+  "fan.metrics": "Bis {time} kamen {completed} von {attempts} Pässen bei einem Mitspieler an. {progressive} erfolgreiche Pässe brachten den Ball mindestens zehn Meter näher zum Tor."
 }

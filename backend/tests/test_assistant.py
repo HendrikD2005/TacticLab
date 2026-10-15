@@ -57,3 +57,14 @@ def test_all_scene_evidence_is_in_available_history():
 
 def test_query_limit():
     assert client.post('/api/explain',json=dict(at=18,player_id=7,query='a'*241)).status_code==422
+
+@pytest.mark.parametrize('language',['en','de'])
+@pytest.mark.parametrize('question',['switch','overload','player'])
+def test_fan_wording_changes_but_scene_evidence_does_not(language,question):
+    analyst=ask(question=question,language=language)
+    fan=ask(question=question,language=language,mode='fan')
+    assert fan['mode']=='fan'
+    assert fan['text']!=analyst['text']
+    assert fan['event_ids']==analyst['event_ids']
+    assert [(s['id'],s['at'],s['insight_id']) for s in fan['scenes']]==[(s['id'],s['at'],s['insight_id']) for s in analyst['scenes']]
+    assert ('simulated' if language=='en' else 'simuliertes') in fan['text']

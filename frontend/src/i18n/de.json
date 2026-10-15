@@ -189,5 +189,21 @@
   "explainSwitch": "Verlagerungen untersuchen",
   "explainOverload": "Überzahl untersuchen",
   "sceneEvidence": "Szenenbelege",
-  "openEvidence": "Beleg bei {time} öffnen"
+  "openEvidence": "Beleg bei {time} öffnen",
+  "preferences": "Deine Spielpräferenzen",
+  "favoriteTeam": "Lieblingsteam",
+  "favoritePlayer": "Lieblingsspieler",
+  "noFavorite": "Kein Favorit",
+  "watchFavorite": "Lieblingsspieler verfolgen",
+  "favoriteMoments": "Nur Lieblingsmomente",
+  "preferenceHint": "Wähle deine Favoriten unabhängig voneinander. Verfolge deinen Spieler mit einem Klick.",
+  "fanPreferenceHint": "Lieblingsmomente zeigt Szenen deines Teams ODER deines Spielers. Ausschalten zeigt beide Teams.",
+  "preferencesTemporary": "Die Auswahl gilt nur für diesen Besuch, da der Browserspeicher nicht verfügbar ist.",
+  "whyItMatters": "Warum das wichtig ist",
+  "fanCaution": "Dies ist ein kurzes simuliertes Spiel. Diese Szenen beweisen nicht, wie gut ein Team oder Spieler ist.",
+  "fanAssistantHint": "Teamfragen beziehen sich auf dein Lieblingsteam. Spielerfragen nutzen den ausgewählten Spieler; ein Name in deiner Frage hat Vorrang. Antworten reichen bis zur pausierten Replay-Zeit.",
+  "fanWhy.pressing_escape": "Der Ball kommt aus der Nähe der Gegner heraus. So kann die Mannschaft mehr Zeit gewinnen, um den nächsten Angriff aufzubauen.",
+  "fanWhy.switch_of_play": "Ein Pass auf die andere Seite kann einem Mitspieler mehr Platz geben, wenn es auf einer Seite eng wird. Daraus entsteht nicht automatisch eine Torchance.",
+  "fanWhy.local_overload": "Mehr eigene Spieler in der Nähe können zusätzliche Anspielmöglichkeiten bieten. Ein Gegner kann den Passweg trotzdem blockieren.",
+  "emptyFavorites": "Bis hierhin gibt es keine bestätigten Szenen für deine Favoriten. Schalte den Favoritenfilter aus, um alle Szenen zu sehen."
 }

@@ -33,5 +33,10 @@
   "assistant.overload": "local overloads",
   "assistant.pressing": "pressure escapes",
   "assistant.shot": "shot",
-  "assistant.turnover": "turnover"
+  "assistant.turnover": "turnover",
+  "fan.pressing_escape": "The ball gets away from nearby opponents. This can give the team more time to build its next attack.",
+  "fan.switch_of_play": "Moving the ball to the other side can give a teammate more room when one side is crowded. It does not necessarily create a scoring chance.",
+  "fan.local_overload": "Having more teammates nearby can offer more passing options. An opponent can still block the route to a teammate.",
+  "fan.caution": "This is a short simulated match. These moments do not prove how good a team or player is.",
+  "fan.metrics": "By {time}, {completed} of {attempts} passes reached a teammate. {progressive} successful passes moved the ball at least ten metres closer to goal."
 }

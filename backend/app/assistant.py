@@ -23,9 +23,12 @@ def answer(match, request, intelligence):
     player_scope = topic != 'compare' and (bool(named) or topic == 'player' or bool(re.search(r'player|spieler', query)))
     facts = snapshot(match, request.at, player.id, intelligence, request.language)
     language = request.language
+    fan = request.mode == 'fan'
+    def narrative(insight):
+        return insight['summary']+' '+tr('fan.'+insight['kind'],language) if fan else insight['explanation']
     timestamp = f'{match.start_minute+int(request.at)//60}:{int(request.at)%60:02d}'
     scope = player.name if player_scope else tr('assistant.scope',language,name='Northbridge' if player.team=='home' else 'Riverside')
-    result = dict(source='deterministic', text='', event_ids=[], scenes=[], at=request.at,
+    result = dict(source='deterministic', mode=request.mode, text='', event_ids=[], scenes=[], at=request.at,
                   player_id=player.id, language=language, scenario=match.scenario, topic=topic,
                   scope=scope, context=tr('assistant.context',language,time=timestamp,scope=scope), unsupported=unsupported)
     if unsupported:
@@ -38,7 +41,7 @@ def answer(match, request, intelligence):
     if topic in KINDS:
         if findings:
             latest = findings[-1]
-            result['text'] = tr('assistant.count',language,kind=tr('assistant.'+topic,language),count=len(findings),shown=min(4,len(findings)))+' '+latest['explanation']+' '+latest['limitation']
+            result['text'] = tr('assistant.count',language,kind=tr('assistant.'+topic,language),count=len(findings),shown=min(4,len(findings)))+' '+narrative(latest)+' '+(tr('fan.caution',language) if fan else latest['limitation'])
         else:
             result['text'] = tr('no_escape',language) if topic=='pressing' else tr('assistant.empty',language,kind=tr('assistant.'+topic,language))
     elif topic=='compare':
@@ -46,12 +49,12 @@ def answer(match, request, intelligence):
         result['text'] = tr('compare',language,**{f'{period}_{key}':values[key] for period,values in [('first',first),('second',second)] for key in ['completed','attempts','progressive']})
         findings = []
     else:
-        result['text'] = tr('metrics',language,time=timestamp,**metrics)+' '+tr('assistant.sample',language)
+        result['text'] = tr('fan.metrics' if fan else 'metrics',language,time=timestamp,**metrics)+' '+tr('fan.caution' if fan else 'assistant.sample',language)
         if findings:
-            result['text'] += ' '+findings[-1]['explanation']
+            result['text'] += ' '+narrative(findings[-1])
     for insight in reversed(findings[-4:]):
         result['scenes'].append(dict(id=insight['id'], insight_id=insight['id'], at=insight['confirmed_at'],
-            start=insight['start'], end=insight['end'], title=insight['title'], reason=insight['explanation'],
+            start=insight['start'], end=insight['end'], title=insight['title'], reason=narrative(insight),
             player_id=player.id, event_ids=insight['event_ids']))
     # Supplement player/comparison responses with observed passing events, never future events.
     if topic not in KINDS:

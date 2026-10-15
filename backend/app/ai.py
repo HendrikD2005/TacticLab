@@ -30,7 +30,7 @@ async def explain(match: Match, request: AnalysisRequest, intelligence: MatchInt
     if not base.startswith('https://'): return {**result,'notice':translate('notice.https',language)}
     try:
         async with httpx.AsyncClient(timeout=20) as client:
-            response=await client.post(base+'/chat/completions',headers={'api-key':os.environ['AZURE_AI_API_KEY']},json={'model':os.environ['AZURE_AI_DEPLOYMENT'],'messages':[{'role':'system','content':f'Explain only the supplied calculated football facts in {request.language}. Do not invent facts, causal claims, opponents or events. Mention small samples. Be concise. This is synthetic data.'},{'role':'user','content':f'Question: {result['topic']}. Selected player: {player.name}. Evidence-grounded answer: {result['text']}. Facts: {facts}'}],'max_completion_tokens':450})
+            response=await client.post(base+'/chat/completions',headers={'api-key':os.environ['AZURE_AI_API_KEY']},json={'model':os.environ['AZURE_AI_DEPLOYMENT'],'messages':[{'role':'system','content':f'Explain only the supplied calculated football facts in {request.language}. Do not invent facts, causal claims, opponents or events. Mention small samples. Be concise. Audience mode: {request.mode}; in fan mode use short everyday sentences and explain football terms. This is synthetic data.'},{'role':'user','content':f'Question: {result['topic']}. Selected player: {player.name}. Evidence-grounded answer: {result['text']}. Facts: {facts}'}],'max_completion_tokens':450})
             response.raise_for_status()
             text=response.json()['choices'][0]['message']['content']
             if not isinstance(text,str) or not text.strip(): raise ValueError('Empty answer')

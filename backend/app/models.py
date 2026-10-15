@@ -48,6 +48,7 @@ class AnalysisRequest(BaseModel):
     at: float = Field(ge=0, le=60)
     player_id: int = Field(ge=0, le=21)
     question: Literal['player', 'pressing', 'compare', 'switch', 'overload'] = 'pressing'
+    mode: Literal['analyst', 'fan'] = 'analyst'
     query: str = Field(default='', max_length=240)
     language: Literal['de', 'en'] = 'en'
 

@@ -189,5 +189,21 @@
   "explainSwitch": "Analyse switches",
   "explainOverload": "Analyse overloads",
   "sceneEvidence": "Scene evidence",
-  "openEvidence": "Open evidence at {time}"
+  "openEvidence": "Open evidence at {time}",
+  "preferences": "Your match preferences",
+  "favoriteTeam": "Favourite team",
+  "favoritePlayer": "Favourite player",
+  "noFavorite": "No favourite",
+  "watchFavorite": "Watch favourite player",
+  "favoriteMoments": "Favourite moments only",
+  "preferenceHint": "Choose favourites independently. Watch your player with one click.",
+  "fanPreferenceHint": "Favourite moments shows scenes for your team OR your player. Turn it off to see both teams.",
+  "preferencesTemporary": "Preferences last only for this visit because browser storage is unavailable.",
+  "whyItMatters": "Why it matters",
+  "fanCaution": "This is a short simulated match. These moments do not prove how good a team or player is.",
+  "fanAssistantHint": "Team shortcuts use your favourite team. Player questions use the selected player; a name in your question overrides that selection. Answers stop at the paused replay time.",
+  "fanWhy.pressing_escape": "The ball gets away from nearby opponents. This can give the team more time to build its next attack.",
+  "fanWhy.switch_of_play": "Moving the ball to the other side can give a teammate more room when one side is crowded. It does not necessarily create a scoring chance.",
+  "fanWhy.local_overload": "Having more teammates nearby can offer more passing options. An opponent can still block the route to a teammate.",
+  "emptyFavorites": "No confirmed moments for your favourites at this time. Turn off the favourites filter to see all moments."
 }

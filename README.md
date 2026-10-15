@@ -116,3 +116,13 @@ The assistant accepts switches of play, local overloads, pressing, player passin
 Questions pause the replay at its exact position. Responses include the time, scope and up to six evidence cards (at most four tactical patterns). Tactical cards seek to the confirmation time and select the corresponding pitch overlay; ordinary event cards seek to the event and select its passer. Seeking, changing players or changing language invalidates pending answers, including sub-second seeks. Live requests retain the server's producer-time bound, and buffered replay still uses the viewed time.
 
 Try the **Switches & overloads** fixture at **62:18**, then ask “Which switches did Theo Wolf play?” or “Welche Überzahl hatte Finn Roth?”. The switch opens at 62:11 and the overload at 62:18. No finding is disclosed before confirmation.
+
+### Personalised fan view
+
+Choose a favourite team and player independently above the replay. Preferences and the viewing mode persist in browser storage; if storage is blocked, they remain available for the current app visit, including scenario and source changes. The current synthetic fixtures share the same roster and home/away teams. Player preferences use roster names, not array positions; an unavailable player is not silently replaced with another favourite.
+
+In Fan mode, **Favourite moments only** includes confirmed moments for the favourite team OR the favourite player. Turning it off restores all moments; the existing selected-player filter still applies. **Watch favourite player** selects the player and enables camera follow without moving the replay time. Analyst mode keeps the complete technical view. Fan details explain what happened and why it can matter, with an explicit reminder of the limits of this short synthetic sample.
+
+Assistant requests include `mode` (`analyst` by default). Fan answers and evidence descriptions use plain-language summaries; event IDs and confirmation times are identical across modes. Team shortcuts in Fan mode use the favourite team when set. Player questions use the inspected player, and an explicit roster name takes precedence. Switching mode or favourite team cancels stale answers; mode is part of the answer-cache key. Opening an assistant scene outside the favourites filter restores the full list so the requested evidence remains visible.
+
+Preference writes occur only on user changes. Existing bounded snapshots supply the filtered scene list; no detection, storage or requests run in the canvas animation loop. `node scripts/personalization-check.mjs` captures the fan view and samples playback frame intervals with favourite-player follow enabled.
