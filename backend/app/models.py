@@ -26,7 +26,7 @@ class Event(BaseModel):
 
 class Match(BaseModel):
     id: str
-    scenario: Literal['standard', 'variation', 'control'] = 'standard'
+    scenario: Literal['standard', 'variation', 'control', 'tactics'] = 'standard'
     name: str
     duration: float
     start_minute: int
@@ -39,12 +39,12 @@ class Match(BaseModel):
     events: list[Event]
 
 class LiveRequest(BaseModel):
-    scenario: Literal['standard', 'variation', 'control'] = 'standard'
+    scenario: Literal['standard', 'variation', 'control', 'tactics'] = 'standard'
     session_id: UUID = Field(default_factory=uuid4)
 
 class AnalysisRequest(BaseModel):
     session_id: UUID | None = None
-    scenario: Literal['standard', 'variation', 'control'] = 'standard'
+    scenario: Literal['standard', 'variation', 'control', 'tactics'] = 'standard'
     at: float = Field(ge=0, le=60)
     player_id: int = Field(ge=0, le=21)
     question: Literal['player', 'pressing', 'compare'] = 'pressing'

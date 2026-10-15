@@ -1,0 +1,31 @@
+import {chromium,expect} from '@playwright/test';
+import {writeFile} from 'node:fs/promises';
+const browser=await chromium.launch({channel:'msedge',headless:true});
+try{
+ const page=await browser.newPage({viewport:{width:1440,height:1100}});
+ await page.goto('http://127.0.0.1:5173/');
+ await page.getByLabel('Match scenario').selectOption('tactics');
+ await page.getByLabel('Match time',{exact:true}).fill('11');
+ await page.getByRole('button',{name:/62:09.*Switch of play/}).click();
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:'artifacts/tactics-switch.png',fullPage:true});
+ await page.getByLabel('Match time',{exact:true}).fill('18');
+ await page.getByRole('button',{name:/62:16.*Local overload/}).click();
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:'artifacts/tactics-overload.png',fullPage:true});
+ await page.getByRole('button',{name:'Light theme'}).click();
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:'artifacts/tactics-overload-light.png',fullPage:true});
+ await page.getByRole('button',{name:'Pressure zones',exact:true}).click();
+ await page.getByRole('button',{name:'Zoom in'}).click();
+ await page.getByRole('button',{name:'Play replay',exact:true}).click();
+ const timings=await page.evaluate(()=>new Promise(resolve=>{const values=[];let previous=0;function frame(now){if(previous)values.push(now-previous);previous=now;if(values.length===180){values.sort((a,b)=>a-b);resolve({frames:180,medianMs:values[90],p95Ms:values[171],over33Ms:values.filter(v=>v>33.4).length})}else requestAnimationFrame(frame)}requestAnimationFrame(frame)}));
+ await writeFile('artifacts/tactics-frame-sample.json',JSON.stringify(timings,null,2));console.log(timings);
+ await page.getByRole('button',{name:'Pause replay',exact:true}).click();
+ await page.getByLabel('Language',{exact:true}).selectOption('de');
+ await page.setViewportSize({width:360,height:900});
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:'artifacts/tactics-mobile.png',fullPage:true});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ console.log('Both historical overlays and German mobile layout captured.');
+}finally{await browser.close()}

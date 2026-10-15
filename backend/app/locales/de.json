@@ -10,5 +10,13 @@
   "second_period": "Zweite Hälfte",
   "notice.limit": "Das stündliche KI-Anfragelimit ist erreicht. Berechnete Fakten werden angezeigt.",
   "notice.https": "Der Azure-Endpunkt muss HTTPS verwenden. Berechnete Fakten werden angezeigt.",
-  "notice.unavailable": "Azure ist nicht verfügbar. Berechnete Fakten werden angezeigt."
+  "notice.unavailable": "Azure ist nicht verfügbar. Berechnete Fakten werden angezeigt.",
+  "switch.title": "Spielverlagerung",
+  "switch.summary": "{passer} findet {receiver} auf dem gegenüberliegenden Flügel mit Raum zur Annahme. Die Mannschaft behält den Ball.",
+  "switch.explanation": "Der Pass verlagert das Spiel um {width_m} m zwischen den gegenüberliegenden äußeren Spielfelddritteln, bei {distance_m} m Passlänge. Der Empfänger hat {space_after_m} m Abstand zum nächsten Gegner. Ballkontrolle ist nach {retained_s} s bestätigt.",
+  "switch.limitation": "Geometrische Einzelpass-Regel auf synthetischem Tracking. Sie beweist weder Absicht noch eine Verschiebung der Abwehr oder eine entstandene Torchance.",
+  "overload.title": "Lokale Überzahl",
+  "overload.summary": "{attackers} Angreifer stehen {defenders} Verteidigern in der Annahmezone gegenüber. Der Ball bleibt dort {retained_s} s kontrolliert.",
+  "overload.explanation": "Bei Bestätigung: {attackers} Angreifer gegen {defenders} Verteidiger im Radius von {radius_m} m um die Annahme. Der lokale Vorteil beträgt über {retained_s} s kontrollierten Ballbesitz in derselben Phase an allen geprüften Zeitpunkten mindestens +{minimum_advantage}.",
+  "overload.limitation": "Die lokale Zählung umfasst Ballführer und gegebenenfalls Torhüter innerhalb der Zone. Freie Passwege, Deckung, Abseits und tatsächliche taktische Überlegenheit werden nicht bewertet; Tracking-Stichproben beweisen keine lückenlose Kontrolle zwischen Messpunkten."
 }

@@ -1,0 +1,56 @@
+import {test,expect} from '@playwright/test';
+
+test('switch and overload evidence, filters, historical markings and rewind',async({page})=>{
+ const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.goto('/');await page.getByLabel('Match scenario').selectOption('tactics');
+ await page.getByLabel('Match time',{exact:true}).fill('10.9');
+ await expect(page.getByRole('button',{name:/Switch of play/})).toHaveCount(0);
+ await page.getByLabel('Match time',{exact:true}).fill('11');
+ await page.getByRole('button',{name:/62:09.*Switch of play/}).click();
+ await expect(page.getByTestId('clock')).toHaveText('62:11');
+ await expect(page.locator('canvas')).toHaveAttribute('data-pattern','switch_of_play');
+ await expect(page.getByTestId('tactical-detail')).toContainText('45');
+ await page.getByLabel('Match time',{exact:true}).fill('18');
+ await page.getByRole('button',{name:/62:16.*Local overload/}).click();
+ await expect(page.getByTestId('clock')).toHaveText('62:18');
+ await expect(page.locator('canvas')).toHaveAttribute('data-pattern','local_overload');
+ await expect(page.getByTestId('tactical-detail')).toContainText('3 v 2');
+ await expect(page.getByTestId('tactical-detail')).toContainText('15 m');
+ await page.getByLabel('Tactical pattern',{exact:true}).selectOption('switch_of_play');
+ await expect(page.getByRole('button',{name:/Local overload/})).toHaveCount(0);
+ await expect(page.locator('canvas')).toHaveAttribute('data-insight','');
+ await page.getByLabel('Tactical pattern',{exact:true}).selectOption('local_overload');
+ await page.getByRole('button',{name:/62:16.*Local overload/}).click();
+ await page.getByRole('button',{name:'Selected player only',exact:true}).click();
+ await page.getByLabel('Select player').selectOption('0');
+ await expect(page.getByTestId('tactical-detail')).toHaveCount(0);
+ await page.getByLabel('Select player').selectOption('5');
+ await page.getByRole('button',{name:/62:16.*Local overload/}).click();
+ await page.getByRole('button',{name:'Fan',exact:true}).click();
+ await expect(page.getByTestId('tactical-detail')).toContainText('3 attackers face 2 defenders');
+ await page.getByLabel('Language',{exact:true}).selectOption('de');
+ await expect(page.getByTestId('tactical-detail')).toContainText('3 Angreifer');
+ await page.setViewportSize({width:360,height:900});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+ await page.getByLabel('Spielzeit',{exact:true}).fill('17');
+ await expect(page.getByTestId('tactical-detail')).toHaveCount(0);
+ await expect(page.locator('canvas')).toHaveAttribute('data-insight','');
+ expect(errors).toEqual([]);
+});
+
+test('live new patterns arrive only after confirmation and stay replayable',async({page})=>{
+ test.setTimeout(35000);
+ await page.goto('/');await page.getByLabel('Match scenario').selectOption('tactics');
+ await page.getByRole('button',{name:'Live simulation',exact:true}).click();
+ await expect(page.getByRole('button',{name:/Switch of play/})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:/62:09.*Switch of play/})).toBeVisible({timeout:15000});
+ await expect(page.getByRole('button',{name:/62:16.*Local overload/})).toBeVisible({timeout:12000});
+ await page.getByRole('button',{name:/62:16.*Local overload/}).click();
+ await expect(page.getByTestId('clock')).toHaveText('62:18');
+ await expect(page.locator('canvas')).toHaveAttribute('data-pattern','local_overload');
+ await page.getByLabel('Match time',{exact:true}).fill('10');
+ await expect(page.getByRole('button',{name:/Switch of play|Local overload/})).toHaveCount(0);
+ await expect(page.locator('canvas')).toHaveAttribute('data-insight','');
+ await page.getByRole('button',{name:'Back to live',exact:true}).click();
+ await expect(page.getByRole('button',{name:/62:16.*Local overload/})).toBeVisible();
+});

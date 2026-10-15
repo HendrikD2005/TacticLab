@@ -29,10 +29,11 @@ React 19, TypeScript, Vite, Tailwind CSS 4, shadcn-style locally owned Button co
 - Searchable event explorer with team, result, pressure and selected-player filters.
 - Browser-local scene notebook with tactical notes and timestamped JSON report export.
 - Five-second replay stepping and keyboard controls (Space, Left/Right outside inputs).
-- Three seeded one-minute synthetic replays with continuous possession, interpolation, seek and 0.5/1/2/4x playback.
+- Four seeded one-minute synthetic replays with continuous possession, interpolation, seek and 0.5/1/2/4x playback.
 - Live simulation: 10 Hz tracking and completed events over SSE, a growing replay buffer, pause/rewind while receiving, reconnect and return to live.
 - Player/period filters; pass accuracy, progressive passes and pressure-related metrics computed on the server.
 - Three visual layers; automatically detected pressure escapes with historical pitch evidence, player filtering, distinct fan/analyst views and light/dark themes.
+- Switch-of-play and sustained local-overload detection, with evidence, pattern filters and historical pitch markings.
 - Explicit possession phases and a two-second confirmation delay; discoveries disappear when scrubbing before their confirmation.
 - English by default, with a persistent English/German language selector for the full UI, analysis and accessibility labels.
 - Guided analysis in German/English with clickable event evidence. Local calculated explanations cost nothing.
@@ -46,6 +47,14 @@ Select **Live simulation** above the pitch. Each session releases a synthetic 60
 Pause, seek or select a tactical finding to inspect received history while the stream continues. **Back to live** follows the newest received frames again at 1x. Replay speeds apply only to your view, never to the broadcaster. Connection recovery resumes after the last accepted frame without discarding your replay position. At completion, the full buffer remains available; **New simulation** starts a new session. Changing scenario or source starts a fresh workspace.
 
 The live feed is a paced simulation of the seeded fixtures, not an external match feed. It requires no paid services. Sessions are held in one backend process, capped at 64 and expire after 10 minutes. A server restart expires live sessions; received browser data remains usable for replay and analysis. Reloading the page discards the browser buffer. Production scaling would need shared session state or sticky routing, plus deployment-level connection limits.
+
+## Tactical patterns
+
+Choose **Switches & overloads** (German: **Verlagerung & Überzahl**) in the scenario selector. In recorded replay, seek to **62:11** for the confirmed cross-field pass or **62:18** for the first confirmed **3 v 2**. The same findings arrive at those times in live simulation. Existing build-up scenarios retain their pressure-escape examples.
+
+The **Tactical pattern** filter separates pressure escapes, switches and local overloads. Select a finding to pause at confirmation and show its explanation and evidence. Switches show historical pass endpoints; overloads show the receiving zone and counted players at confirmation. Fan mode summarizes the finding; analyst mode includes numerical evidence, explicit rules and limitations. Both languages, player focus, scene saving and JSON exports work with all kinds.
+
+These are transparent geometric heuristics on synthetic tracking, not a trained scouting model. Switches currently cover a single successful pass; overloads are reception-triggered and need two seconds of locally controlled possession. See `docs/metrics.md` for thresholds and counterexamples.
 
 ## Analysis workspace
 

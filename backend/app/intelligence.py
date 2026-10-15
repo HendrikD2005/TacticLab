@@ -1,4 +1,4 @@
-"""Deterministic, time-causal possession and single-pass pressure escape detection.
+"""Deterministic possession and time-confirmed tactical pattern detection.
 
 Thresholds are transparent prototype heuristics, not a calibrated tactical model.
 The index is built once per match; requests only select already-confirmed findings.
@@ -6,6 +6,7 @@ The index is built once per match; requests only select already-confirmed findin
 from bisect import bisect_right
 from math import hypot
 from .models import Match
+from .tactics import detect_patterns
 
 PRESSURE_M = 10.0
 SPACE_M = 8.0
@@ -25,6 +26,8 @@ class MatchIntelligence:
         self._build_possession()
         self.state_times = [s['since'] for s in self.states]
         self._detect()
+        self.insights.extend(detect_patterns(self))
+        self.insights.sort(key=lambda i: (i['confirmed_at'], i['id']))
         self.insight_times = [i['confirmed_at'] for i in self.insights]
 
     def point(self, at, player):

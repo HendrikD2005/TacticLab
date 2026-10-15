@@ -44,3 +44,7 @@ body{padding:0}
 #tl .transport .speed-label select{width:120px}
 @media(max-width:1000px){#tl .workspace-nav{height:auto;z-index:25}#tl .commandbar{top:104px}#tl .analysis-panel,#tl .pitchbox{scroll-margin-top:200px}}
 @media(max-width:480px){#tl .commandbar{top:102px}}
+
+#tl .pattern-filter{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin-bottom:12px;flex-wrap:wrap}#tl .pattern-filter select{width:auto;max-width:100%;min-width:180px}
+
+#tl .scenario-label{width:auto;max-width:100%}#tl .scenario-label select{width:200px;max-width:100%}

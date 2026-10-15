@@ -72,6 +72,6 @@ test('scenario changes reset replay and isolate findings',async({page})=>{
  await page.getByLabel('Spielszenario').selectOption('control');
  await expect(page.getByTestId('clock')).toHaveText('62:00');
  await page.getByLabel('Spielzeit',{exact:true}).fill('60');
- await expect(page.getByText(/Bisher kein bestätigter Pressingdurchbruch/)).toBeVisible();
+ await expect(page.getByText(/Bisher kein bestätigter taktischer Befund/)).toBeVisible();
  await expect(page.getByRole('button',{name:/Pressingdurchbruch/})).toHaveCount(0);
 });

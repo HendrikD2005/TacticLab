@@ -10,10 +10,10 @@ SAMPLE_HZ=10
 DURATION=60
 PASS_SPEED=16.0  # illustrative m/s, not calibrated against professional tracking
 
-def generate_match(seed: int = 42) -> Match:
+def generate_match(seed: int = 42, *, base_positions=None, routes=None, movement_range=8) -> Match:
     rng=np.random.default_rng(seed)
     times=np.arange(0,DURATION+1/SAMPLE_HZ/2,1/SAMPLE_HZ)
-    base=np.asarray(HOME+AWAY,dtype=float)
+    base=np.asarray(base_positions or HOME+AWAY,dtype=float)
     positions=np.empty((len(times),22,2)); positions[0]=base
     velocity=np.zeros_like(base)
     target=base.copy()
@@ -21,7 +21,7 @@ def generate_match(seed: int = 42) -> Match:
         if k==1 or k%30==0:
             # Team shifts plus individual support runs, with a conservative goalkeeper range.
             shift=np.array([6*np.sin(t*.23),5*np.sin(t*.31)])
-            target=base+shift+rng.uniform(-8,8,(22,2))
+            target=base+shift+rng.uniform(-movement_range,movement_range,(22,2))
             target[[0,11]]=base[[0,11]]+rng.uniform(-1.5,1.5,(2,2))
             target[:,0]=np.clip(target[:,0],8,97);target[:,1]=np.clip(target[:,1],8,60)
         delta=target-positions[k-1]
@@ -32,7 +32,7 @@ def generate_match(seed: int = 42) -> Match:
         velocity+=acceleration/SAMPLE_HZ
         positions[k]=positions[k-1]+velocity/SAMPLE_HZ
     players=[Player(id=i,number=NUMBERS[i%11],name=name,team='home' if i<11 else 'away',role='goalkeeper' if i%11==0 else 'defender' if i%11<5 else 'midfielder' if i%11<8 else 'forward') for i,name in enumerate(NAMES)]
-    routes=[(4,2,5,True,'s1'),(7,5,7,True,'s1'),(10,7,9,True,'s1'),(14,9,8,True,'s1'),(18,8,3,True,'link1'),(20,3,7,True,'s2'),(23,7,10,True,'s2'),(26,10,4,False,'s2'),(30,17,2,False,'link2'),(33,2,7,True,'s3'),(36,7,9,True,'s3'),(39,9,8,True,'s3'),(44,8,4,True,'link3'),(47,4,5,True,'s4'),(50,5,7,True,'s4'),(53,7,9,True,'s4'),(56,9,8,True,'s4')]
+    routes=routes or [(4,2,5,True,'s1'),(7,5,7,True,'s1'),(10,7,9,True,'s1'),(14,9,8,True,'s1'),(18,8,3,True,'link1'),(20,3,7,True,'s2'),(23,7,10,True,'s2'),(26,10,4,False,'s2'),(30,17,2,False,'link2'),(33,2,7,True,'s3'),(36,7,9,True,'s3'),(39,9,8,True,'s3'),(44,8,4,True,'link3'),(47,4,5,True,'s4'),(50,5,7,True,'s4'),(53,7,9,True,'s4'),(56,9,8,True,'s4')]
     events=[]
     def at(t,player):
         ix=np.clip(t*SAMPLE_HZ,0,len(times)-1);lo=int(ix);hi=min(lo+1,len(times)-1)
@@ -64,3 +64,13 @@ def generate_match(seed: int = 42) -> Match:
         balls.append(np.round(ball,3).tolist())
     return Match(id=f'northbridge-riverside-{seed}',name='Northbridge – Riverside',duration=DURATION,initial_player_id=2,start_minute=62,sample_hz=SAMPLE_HZ,players=players,times=np.round(times,3).tolist(),positions=np.round(positions,3).tolist(),ball=balls,events=events)
 
+
+
+def generate_tactical_match() -> Match:
+    """Wider circulation and a supported receiving pocket; labels do not drive detection."""
+    home=[(7,34),(30,10),(24,28),(24,46),(46,58),(55,44),(70,9),(58,36),(85,27),(64,48),(81,62)]
+    away=[(98,34),(80,8),(86,24),(85,41),(83,59),(74,20),(62,42),(65,50),(39,24),(38,40),(15,56)]
+    routes=[(4,2,1,True,None),(9,1,4,True,None),(16,4,5,True,None),
+            (23,5,7,True,None),(29,7,9,True,None),(36,9,4,True,None),
+            (43,4,1,True,None),(50,1,5,True,None),(57,5,7,True,None)]
+    return generate_match(104,base_positions=home+away,routes=routes,movement_range=1.5).model_copy(update={'scenario':'tactics'})

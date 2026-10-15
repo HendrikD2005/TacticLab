@@ -29,7 +29,7 @@ async def explain(match: Match, request: AnalysisRequest, intelligence: MatchInt
             **{f'{period}_{key}':values[key] for period,values in [('first',first),('second',second)]
                for key in ['completed','attempts','progressive']})
     if request.question=='pressing':
-        findings=[i for i in facts['insights'] if i['team']==player.team]
+        findings=[i for i in facts['insights'] if i['team']==player.team and i['kind']=='pressing_escape']
         if findings:
             latest=findings[-1]
             result['text']=latest['explanation']+' '+latest['limitation']

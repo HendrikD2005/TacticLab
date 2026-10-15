@@ -5,7 +5,7 @@ from fastapi import FastAPI, Query, Request, Header, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
-from .data import generate_match
+from .data import generate_match, generate_tactical_match
 from .analysis import snapshot
 from .intelligence import MatchIntelligence
 from .ai import configured, explain
@@ -16,9 +16,10 @@ from .live import LiveSessions
 ROOT=Path(__file__).resolve().parents[2]
 load_dotenv(ROOT/'.env')
 app=FastAPI(title='TacticLab API',version='0.1.0')
-Scenario = Literal['standard', 'variation', 'control']
+Scenario = Literal['standard', 'variation', 'control', 'tactics']
 SCENARIO_SEEDS = {'standard':42, 'variation':2026, 'control':7}
 matches = {key:generate_match(seed).model_copy(update={'scenario':key}) for key,seed in SCENARIO_SEEDS.items()}
+matches['tactics'] = generate_tactical_match()
 engines = {key:MatchIntelligence(value) for key,value in matches.items()}
 match, intelligence = matches['standard'], engines['standard']
 live_sessions = LiveSessions(matches)

@@ -21,6 +21,16 @@ def text(key: str, language: Language = 'en', **values) -> str:
 
 def localize_insight(insight: dict, players: dict, language: Language) -> dict:
     evidence = insight['evidence']
+    if insight['kind'] == 'switch_of_play':
+        return {**insight, 'title':text('switch.title',language),
+            'summary':text('switch.summary',language,passer=players[insight['player_ids'][0]].name,receiver=players[insight['player_ids'][1]].name),
+            'explanation':text('switch.explanation',language,**evidence),
+            'limitation':text('switch.limitation',language)}
+    if insight['kind'] == 'local_overload':
+        return {**insight, 'title':text('overload.title',language),
+            'summary':text('overload.summary',language,**evidence),
+            'explanation':text('overload.explanation',language,**evidence),
+            'limitation':text('overload.limitation',language)}
     return {**insight,
         'title':text('escape.title', language),
         'summary':text('escape.summary', language, passer=players[insight['player_ids'][0]].name,

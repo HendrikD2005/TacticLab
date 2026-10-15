@@ -10,5 +10,13 @@
   "second_period": "Second period",
   "notice.limit": "AI hourly request limit reached. Showing calculated facts.",
   "notice.https": "The Azure endpoint must use HTTPS. Showing calculated facts.",
-  "notice.unavailable": "Azure unavailable. Showing calculated facts."
+  "notice.unavailable": "Azure unavailable. Showing calculated facts.",
+  "switch.title": "Switch of play",
+  "switch.summary": "{passer} finds {receiver} on the opposite flank with room to receive. The team retains possession.",
+  "switch.explanation": "The pass shifts play {width_m} m across the pitch between opposite wide thirds, over {distance_m} m. The receiver has {space_after_m} m to the nearest opponent. Team control is confirmed {retained_s} s later.",
+  "switch.limitation": "Geometric single-pass heuristic on synthetic tracking. It does not prove intent, defensive displacement or a chance created.",
+  "overload.title": "Local overload",
+  "overload.summary": "{attackers} attackers face {defenders} defenders around the receiving zone. The ball stays controlled locally for {retained_s} s.",
+  "overload.explanation": "At confirmation: {attackers} attackers versus {defenders} defenders within {radius_m} m of the reception point. The local advantage stays at least +{minimum_advantage} throughout {retained_s} s of sampled, controlled possession in the same phase.",
+  "overload.limitation": "Local headcount includes the ball carrier and goalkeepers if inside the zone. It does not measure open passing lanes, marking, offside or effective tactical superiority; tracking samples cannot establish continuous control between samples."
 }
