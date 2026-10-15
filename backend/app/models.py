@@ -47,6 +47,7 @@ class AnalysisRequest(BaseModel):
     scenario: Literal['standard', 'variation', 'control', 'tactics'] = 'standard'
     at: float = Field(ge=0, le=60)
     player_id: int = Field(ge=0, le=21)
-    question: Literal['player', 'pressing', 'compare'] = 'pressing'
+    question: Literal['player', 'pressing', 'compare', 'switch', 'overload'] = 'pressing'
+    query: str = Field(default='', max_length=240)
     language: Literal['de', 'en'] = 'en'
 

@@ -108,3 +108,11 @@ FastAPI serves `frontend/dist` after a build. Azure Container Apps can run this 
 
 This is the foundation, not a completed hackathon submission. A broader scenario generator, multi-pass tactical detection, calibrated metrics, incremental detection for external feeds, structured AI validation and the final submission assets remain to be built. No licence has been selected yet.
 
+
+### Replay-aware analysis assistant
+
+The assistant accepts switches of play, local overloads, pressing, player passing and period comparisons in English or German. Quick actions use the selected player's team; player analysis uses the selected player. A full name or surname from the roster narrows free-text questions to that player. Ask one topic and one player at a time. Unsupported or multi-topic questions return a scope hint instead of a fabricated answer. This is deterministic intent routing, not a general-purpose football chatbot; no paid service is required.
+
+Questions pause the replay at its exact position. Responses include the time, scope and up to six evidence cards (at most four tactical patterns). Tactical cards seek to the confirmation time and select the corresponding pitch overlay; ordinary event cards seek to the event and select its passer. Seeking, changing players or changing language invalidates pending answers, including sub-second seeks. Live requests retain the server's producer-time bound, and buffered replay still uses the viewed time.
+
+Try the **Switches & overloads** fixture at **62:18**, then ask “Which switches did Theo Wolf play?” or “Welche Überzahl hatte Finn Roth?”. The switch opens at 62:11 and the overload at 62:18. No finding is disclosed before confirmation.

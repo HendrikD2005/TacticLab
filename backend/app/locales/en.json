@@ -18,5 +18,20 @@
   "overload.title": "Local overload",
   "overload.summary": "{attackers} attackers face {defenders} defenders around the receiving zone. The ball stays controlled locally for {retained_s} s.",
   "overload.explanation": "At confirmation: {attackers} attackers versus {defenders} defenders within {radius_m} m of the reception point. The local advantage stays at least +{minimum_advantage} throughout {retained_s} s of sampled, controlled possession in the same phase.",
-  "overload.limitation": "Local headcount includes the ball carrier and goalkeepers if inside the zone. It does not measure open passing lanes, marking, offside or effective tactical superiority; tracking samples cannot establish continuous control between samples."
+  "overload.limitation": "Local headcount includes the ball carrier and goalkeepers if inside the zone. It does not measure open passing lanes, marking, offside or effective tactical superiority; tracking samples cannot establish continuous control between samples.",
+  "assistant.unsupported": "I can analyse switches of play, local overloads, pressing, player passing and period comparisons. Ask about one topic and optionally name one player from the roster.",
+  "assistant.context": "By {time} · {scope}.",
+  "assistant.empty": "No confirmed {kind} in this scope yet. This is not proof that none occurred.",
+  "assistant.count": "Confirmed {kind}: {count}. Showing the latest {shown} scenes.",
+  "assistant.sample": "Rule-based observations from a small synthetic sample; not a causal or scouting assessment.",
+  "assistant.pass": "{name} → {target}: {outcome}",
+  "assistant.success": "completed pass",
+  "assistant.failed": "unsuccessful pass",
+  "assistant.event": "{name}: {kind}",
+  "assistant.scope": "Team {name}",
+  "assistant.switch": "switches of play",
+  "assistant.overload": "local overloads",
+  "assistant.pressing": "pressure escapes",
+  "assistant.shot": "shot",
+  "assistant.turnover": "turnover"
 }

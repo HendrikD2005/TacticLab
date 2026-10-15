@@ -1,10 +1,11 @@
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import {useI18n} from '@/i18n';
 import {Button} from '@/components/ui/button';
 import {formatTime,type TacticalInsight,type InsightKind,type Mode,type Player} from '@/lib/types';
 interface Props{insights:TacticalInsight[];active:TacticalInsight|null;mode:Mode;players:Player[];focused:boolean;onFocus:()=>void;onSelect:(insight:TacticalInsight)=>void;onClear:()=>void}
 export default function TacticalInsights({insights,active,mode,players,focused,onFocus,onSelect,onClear}:Props){
  const {t,number}=useI18n();const [kind,setKind]=useState<InsightKind|'all'>('all');
+ useEffect(()=>{if(active)setKind(current=>current==='all'||current===active.kind?current:'all')},[active?.id]);
  const visible=insights.filter(i=>kind==='all'||i.kind===kind);
  const badge=(i:TacticalInsight)=>i.kind==='pressing_escape'?`+${number(i.evidence.gain_m)} m`:i.kind==='switch_of_play'?`${number(i.evidence.width_m)} m`:`${i.evidence.attackers} v ${i.evidence.defenders}`;
  return <section className="tactical-insights" aria-label={t('automaticAnalysis')}>

@@ -11,7 +11,7 @@ import Pitch,{type PitchApi} from '@/components/Pitch';
 import {Playback} from '@/lib/playback';
 import {LiveFeed,noSubscribe,offlineSnapshot} from '@/lib/live';
 import {useAnalysis} from '@/hooks/useAnalysis';
-import {formatTime,type Match,type Scene,type Mode,type Layer,type Explanation,type TacticalInsight,type Scenario,type MatchEvent} from '@/lib/types';
+import {formatTime,type Match,type Scene,type Mode,type Layer,type Explanation,type EvidenceScene,type TacticalInsight,type Scenario,type MatchEvent} from '@/lib/types';
 const Comparison=lazy(()=>import('@/components/Comparison'));
 
 export default function App(){
@@ -50,6 +50,8 @@ function Workspace({scene,feed,onScenario,onSource,onRestart}:{scene:Scene;feed:
  const panelRef=useRef<HTMLDivElement|null>(null),pitchRef=useRef<HTMLDivElement|null>(null);
  const [activeId,setActiveId]=useState<string|null>(null),[insightFocus,setInsightFocus]=useState(false);
  const [theme,setTheme]=useState(()=>{try{return localStorage.getItem('tl-theme')==='light'?'light':'dark'}catch{return 'dark'}});
+ const [questionText,setQuestionText]=useState('');
+ const requestAt=useRef<number|null>(null);
  const [explanation,setExplanation]=useState<Explanation|null>(null),[busy,setBusy]=useState(false),[explainError,setExplainError]=useState(''),[aiEnabled,setAiEnabled]=useState(false);
  const pitchApi=useRef<PitchApi|null>(null),request=useRef<AbortController|null>(null),cache=useRef(new Map<string,Explanation>());
  // Finished sessions use the recorded analysis index, still bounded by the received clock.
@@ -57,7 +59,8 @@ function Workspace({scene,feed,onScenario,onSource,onRestart}:{scene:Scene;feed:
  const {data,error}=useAnalysis(playback.time,selected,match.scenario,analysisSession);const p=match.players[selected],stats=data?.player;
  useEffect(()=>{document.documentElement.style.colorScheme=theme;try{localStorage.setItem('tl-theme',theme)}catch{}},[theme]);
  useEffect(()=>{const ctrl=new AbortController();fetch('/api/health',{signal:ctrl.signal}).then(r=>r.json()).then(d=>setAiEnabled(d.ai_enabled)).catch(()=>{});return()=>ctrl.abort()},[]);
- useEffect(()=>{request.current?.abort();setBusy(false);setExplanation(null);setExplainError('')},[second,selected,language]);
+ useEffect(()=>{request.current?.abort();setBusy(false);setExplanation(null);setExplainError('')},[selected,language]);
+ useEffect(()=>{if(requestAt.current!==null&&Math.abs(playback.time-requestAt.current)>.00001){request.current?.abort();requestAt.current=null;setBusy(false);setExplanation(null);setExplainError('')}},[playback.time]);
  useEffect(()=>()=>request.current?.abort(),[]);
  useEffect(()=>{
   const keydown=(event:KeyboardEvent)=>{
@@ -78,10 +81,22 @@ function Workspace({scene,feed,onScenario,onSource,onRestart}:{scene:Scene;feed:
  function saveScene(){if(draft&&notebook.scenes.length<MAX_SCENES){notebook.add({...draft,text:draft.text.trim()});setDraft(null)}}
  function inspectScene(scene:SavedScene){setSelected(scene.player);setActiveId(scene.insightId);setFollow(false);clock.seek(scene.at);setSection('overview');pitchRef.current?.scrollIntoView({block:'center'})}
  function exportReport(){downloadReport(buildReport(match,clock.position(),playback.available,data,notebook.scenes,language));setExported(true)}
- async function explain(question:'player'|'pressing'|'compare'){
-   if(playback.playing)clock.toggle();const at=Math.floor(clock.position());const key=`${at}/${selected}/${language}/${question}`;setExplainError('');const existing=cache.current.get(key);if(existing){setExplanation(existing);return}
-   request.current?.abort();const ctrl=new AbortController();request.current=ctrl;setBusy(true);setExplanation(null);
-   try{const response=await fetch('/api/explain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:analysisSession,scenario:match.scenario,at,player_id:selected,question,language}),signal:ctrl.signal});if(!response.ok)throw new Error('Explanation unavailable');const answer=await response.json() as Explanation;if(ctrl.signal.aborted)return;cache.current.set(key,answer);if(cache.current.size>80)cache.current.delete(cache.current.keys().next().value!);setExplanation(answer)}catch(e){if(!ctrl.signal.aborted)setExplainError('failed')}finally{if(!ctrl.signal.aborted)setBusy(false)}
+ function inspectEvidence(scene:EvidenceScene){
+  setInsightFocus(false);setActiveId(scene.insight_id);setSelected(scene.player_id);setFollow(false);setLayer('passes');setSection('overview');clock.seek(scene.at);pitchRef.current?.scrollIntoView({block:'center'});
+ }
+ async function explain(question:'player'|'pressing'|'compare'|'switch'|'overload',query=''){
+   const at=clock.position();clock.seek(at);requestAt.current=at;
+   const key=`${analysisSession}/${at}/${selected}/${language}/${question}/${query}`;
+   request.current?.abort();setExplainError('');setBusy(false);
+   const existing=cache.current.get(key);if(existing){setExplanation(existing);return}
+   const ctrl=new AbortController();request.current=ctrl;setBusy(true);setExplanation(null);
+   try{
+    const response=await fetch('/api/explain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:analysisSession,scenario:match.scenario,at,player_id:selected,question,query,language}),signal:ctrl.signal});
+    if(!response.ok)throw new Error('Explanation unavailable');
+    const answer=await response.json() as Explanation;
+    if(ctrl.signal.aborted||Math.abs(clock.position()-at)>.00001)return;
+    cache.current.set(key,answer);if(cache.current.size>80)cache.current.delete(cache.current.keys().next().value!);setExplanation(answer);
+   }catch{if(!ctrl.signal.aborted)setExplainError('failed')}finally{if(!ctrl.signal.aborted)setBusy(false)}
  }
  const insights=useMemo(()=>data?.insights.filter(i=>!insightFocus||i.player_ids.includes(selected))??[],[data,insightFocus,selected]);
  const active=insights.find(i=>i.id===activeId)??null;
@@ -110,7 +125,7 @@ function Workspace({scene,feed,onScenario,onSource,onRestart}:{scene:Scene;feed:
  {error?<p role="alert" className="error-message">{t('error.analysis')}</p>:<><div className="stats"><div className="stat"><strong data-testid="progressive">{stats?.progressive??'—'}</strong><span>{mode==='fan'?t('gainingPasses'):t('progressive')}</span></div><div className="stat"><strong>{stats?.accuracy!=null?percent(stats.accuracy):'—'}</strong><span>{mode==='fan'?t('passesArrived'):t('accuracy')}</span></div></div><div className="sample">{t('attempts',{count:stats?.attempts??0})}</div></>}
  <Button className="follow" aria-pressed={follow} onClick={()=>setFollow(!follow)}><Focus/>{follow?t('unfollow'):t('follow')}</Button><hr/><h3>{t('underPressure')}</h3><div className="barrow"><div className="barlabel"><span>{t('successfulPasses')}</span><span>{stats?`${stats.pressure_completed} / ${stats.pressure_attempts}`:'—'}</span></div><div className="track"><i style={{width:stats?.pressure_attempts?`${stats.pressure_completed/stats.pressure_attempts*100}%`:'0%'}}/></div></div><div className="barrow"><div className="barlabel"><span>{t('forwardPasses')}</span><span>{stats?ratio(stats.forward,stats.attempts):'—'}</span></div><div className="track"><i style={{width:stats?.attempts?`${stats.forward/stats.attempts*100}%`:'0%'}}/></div></div>
  {mode==='analyst'&&data&&<><hr/><h3>{p.team==='home'?'Northbridge':'Riverside'} · {t('progressive')}</h3><Suspense fallback={<div className="comparison-chart chart-loading">{t('chartLoading')}</div>}><Comparison data={data.comparison}/></Suspense><p className="sample">{t('comparisonNote')}</p></>}
- </div><div className="insight"><div className="eyebrow">{t('assistant')}</div><h2>{t('understand')}</h2><div className="question-list"><Button disabled={busy} onClick={()=>explain('pressing')}>{t('explainPressing')}<ArrowUpRight/></Button><Button disabled={busy} onClick={()=>explain('player')}>{t('explainPlayer')}<ArrowUpRight/></Button>{mode==='analyst'&&<Button disabled={busy} onClick={()=>explain('compare')}>{t('comparePhases')}<ArrowUpRight/></Button>}</div><div aria-live="polite">{busy&&<p><LoaderCircle className="spin inline-icon"/>{t('analysing')}</p>}{explainError&&<p role="alert">{t('error.explanation')}</p>}{explanation?.language===language&&<><p className="explanation">{explanation.text}</p><div className="evidence">{explanation.event_ids.map(id=>{const event=match.events.find(e=>e.id===id);return event?<Button key={id} onClick={()=>clock.seek(event.time)}>{formatTime(event.time)} ↗</Button>:null})}</div>{explanation.notice&&<p>{explanation.notice}</p>}</>}</div><div className="muted ai-status">{explanation?.source==='azure'?t('azureResult'):aiEnabled?t('azureEnabled'):t('localResult')}</div></div></aside></div>
+ </div><div className="insight"><div className="eyebrow">{t('assistant')}</div><h2>{t('understand')}</h2><p className="sample">{t('assistantHint')}</p><form className="assistant-form" onSubmit={e=>{e.preventDefault();if(questionText.trim())void explain('player',questionText.trim())}}><label htmlFor="analysis-question">{t('questionLabel')}</label><textarea id="analysis-question" maxLength={240} rows={2} value={questionText} onChange={e=>setQuestionText(e.target.value)} placeholder={t('questionPlaceholder')}/><Button type="submit" variant="primary" disabled={busy||!questionText.trim()}>{t('askQuestion')}</Button></form><div className="question-list"><Button disabled={busy} onClick={()=>explain('switch')}>{t('explainSwitch')}<ArrowUpRight/></Button><Button disabled={busy} onClick={()=>explain('overload')}>{t('explainOverload')}<ArrowUpRight/></Button><Button disabled={busy} onClick={()=>explain('pressing')}>{t('explainPressing')}<ArrowUpRight/></Button><Button disabled={busy} onClick={()=>explain('player')}>{t('explainPlayer')}<ArrowUpRight/></Button>{mode==='analyst'&&<Button disabled={busy} onClick={()=>explain('compare')}>{t('comparePhases')}<ArrowUpRight/></Button>}</div><div aria-live="polite">{busy&&<p><LoaderCircle className="spin inline-icon"/>{t('analysing')}</p>}{explainError&&<p role="alert">{t('error.explanation')}</p>}{explanation?.language===language&&<><p className="sample" data-testid="answer-context">{explanation.context}</p><p className="explanation">{explanation.text}</p><div className="assistant-evidence" aria-label={t('sceneEvidence')}>{explanation.scenes.map(scene=><Button key={scene.id} className="evidence-scene" onClick={()=>inspectEvidence(scene)}><span>{formatTime(scene.end,match.start_minute)} · {scene.title}</span><small>{scene.reason}</small><span className="sample">{t('openEvidence',{time:formatTime(scene.at,match.start_minute)})} ↗</span></Button>)}</div>{explanation.notice&&<p>{explanation.notice}</p>}</>}</div><div className="muted ai-status">{explanation?.source==='azure'?t('azureResult'):aiEnabled?t('azureEnabled'):t('localResult')}</div></div></aside></div>
  <footer><span>{t('version')}</span><span>{t('shortcuts')}</span></footer></div></div></div>
 }
 

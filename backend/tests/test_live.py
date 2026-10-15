@@ -116,3 +116,17 @@ def test_future_cursor_rejected_before_broadcast_completes(live):
     key=create(client).json()['session_id']
     assert client.get(f'/api/live/{key}/events?after=1').status_code==409
     assert client.get(f'/api/analysis?session_id={uuid4()}').status_code==410
+
+def test_assistant_pattern_evidence_respects_live_and_replay_boundaries(live):
+    sessions,clock,client=live
+    key=create(client,'tactics').json()['session_id']
+    def ask(at,question):
+        return client.post('/api/explain',json=dict(at=at,scenario='tactics',player_id=7,session_id=key,question=question)).json()
+    clock[0]+=10.9
+    assert ask(60,'switch')['scenes']==[]
+    clock[0]+=.1
+    assert ask(60,'switch')['scenes'][0]['at']==11
+    clock[0]+=7
+    assert ask(60,'overload')['scenes'][0]['at']==18
+    assert ask(17.9,'overload')['scenes']==[]
+    assert ask(10.9,'switch')['scenes']==[]

@@ -16,6 +16,7 @@ export type TacticalInsight=InsightBase & (
  {kind:'local_overload';evidence:{attackers:number;defenders:number;minimum_advantage:number;radius_m:number;retained_s:number};overlay:{center:number[];radius:number;at:number;members:{id:number;team:'home'|'away';point:number[]}[]}}
 );
 export interface Analysis{session_id:string|null;language:'en'|'de';scenario:Scenario;possession:Possession;insights:TacticalInsight[];at:number;player_id:number;player:Metrics;team:Metrics;comparison:({label:string}&Metrics)[]}
-export interface Explanation{session_id:string|null;language:'en'|'de';source:'deterministic'|'azure';text:string;event_ids:string[];at:number;player_id:number;notice?:string}
+export interface EvidenceScene{id:string;insight_id:string|null;at:number;start:number;end:number;title:string;reason:string;player_id:number;event_ids:string[]}
+export interface Explanation{scenes:EvidenceScene[];context:string;scope:string;topic:string;unsupported:boolean;scenario:Scenario;session_id:string|null;language:'en'|'de';source:'deterministic'|'azure';text:string;event_ids:string[];at:number;player_id:number;notice?:string}
 export function formatTime(t:number,start=62){return `${start+Math.floor(t/60)}:${Math.floor(t%60).toString().padStart(2,'0')}`}
 

@@ -181,5 +181,13 @@
   "overloadRule": "Nach erfolgreicher Annahme mindestens 3 Angreifer und 1 Verteidiger im festen Radius von 15 m. An jedem Tracking- und Ballbesitzwechsel-Zeitpunkt über 2 s sind mehr Angreifer als Verteidiger in der Zone. Der Ballführer bleibt kontrolliert innerhalb der Zone in derselben Phase. Überlappende Befunde derselben Phase werden für 8 s unterdrückt.",
   "switchOverlay": "Markierung: historische Verlagerung · {start}–{end}",
   "overloadOverlay": "Markierung: historische Zone und gezählte Spieler bei {time}. Grün: angreifende Mannschaft; Blau: Verteidiger.",
-  "overloadReference": "Annahme: {events} · Ballbesitzphase {phase}. Zone beobachtet von {start} bis zur Bestätigung bei {confirmed}."
+  "overloadReference": "Annahme: {events} · Ballbesitzphase {phase}. Zone beobachtet von {start} bis zur Bestätigung bei {confirmed}.",
+  "assistantHint": "Antworten nutzen nur Ereignisse bis zur pausierten Replay-Zeit. Nenne einen Spieler, um die Auswahl einzugrenzen.",
+  "questionLabel": "Deine Analysefrage",
+  "questionPlaceholder": "Welche Spielverlagerungen spielte Theo Wolf?",
+  "askQuestion": "Frage stellen",
+  "explainSwitch": "Verlagerungen untersuchen",
+  "explainOverload": "Überzahl untersuchen",
+  "sceneEvidence": "Szenenbelege",
+  "openEvidence": "Beleg bei {time} öffnen"
 }

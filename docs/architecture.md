@@ -113,3 +113,9 @@ A local 100-build sample averaged 1.883 ms per tactical index; 1,000 full analys
 New tactical confirmation is aligned to the first available tracking sample at or after reception + 2 s. The evidence reports the actual observed interval. This avoids using a future interpolation endpoint for off-grid event timestamps.
 
 The tactical-overlay frame sample measured median 8.3 ms and p95 8.5 ms with no frames above 33.4 ms out of 180. This remains a short local sample rather than a cross-device guarantee.
+
+### Assistant evidence contract
+
+`POST /api/explain` extends the existing enum with `switch` and `overload` and accepts an optional `query` (max 240 characters). `assistant.py` resolves supported topic keywords and roster names, then uses the existing immutable intelligence index through a bounded snapshot. It returns `context`, `scope`, `topic`, `unsupported` and `scenes` in addition to the existing fields. A scene carries its event IDs, historical interval, navigation time, player ID and optional insight ID. Only confirmed findings and completed events at or before the request time are eligible. Player-pattern membership includes receiving/involved players, while passing statistics still count the player's own passes.
+
+The optional Azure adapter may rewrite wording; evidence cards remain deterministic. Unsupported questions bypass Azure. The frontend keeps a bounded 80-answer cache per workspace keyed by session, exact time, selected player, locale, topic and query. Replay movement aborts pending requests and clears stale answers. Analysis remains request-driven; no new detection or network work enters the animation loop.

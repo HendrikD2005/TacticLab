@@ -18,5 +18,20 @@
   "overload.title": "Lokale Überzahl",
   "overload.summary": "{attackers} Angreifer stehen {defenders} Verteidigern in der Annahmezone gegenüber. Der Ball bleibt dort {retained_s} s kontrolliert.",
   "overload.explanation": "Bei Bestätigung: {attackers} Angreifer gegen {defenders} Verteidiger im Radius von {radius_m} m um die Annahme. Der lokale Vorteil beträgt über {retained_s} s kontrollierten Ballbesitz in derselben Phase an allen geprüften Zeitpunkten mindestens +{minimum_advantage}.",
-  "overload.limitation": "Die lokale Zählung umfasst Ballführer und gegebenenfalls Torhüter innerhalb der Zone. Freie Passwege, Deckung, Abseits und tatsächliche taktische Überlegenheit werden nicht bewertet; Tracking-Stichproben beweisen keine lückenlose Kontrolle zwischen Messpunkten."
+  "overload.limitation": "Die lokale Zählung umfasst Ballführer und gegebenenfalls Torhüter innerhalb der Zone. Freie Passwege, Deckung, Abseits und tatsächliche taktische Überlegenheit werden nicht bewertet; Tracking-Stichproben beweisen keine lückenlose Kontrolle zwischen Messpunkten.",
+  "assistant.unsupported": "Ich kann Spielverlagerungen, lokale Überzahl, Pressing, Spielerpässe und Spielphasen vergleichen. Frage nach einem Thema und optional einem Spieler aus dem Kader.",
+  "assistant.context": "Bis {time} · {scope}.",
+  "assistant.empty": "Noch keine bestätigten Muster ({kind}) in dieser Auswahl. Das beweist nicht, dass keine aufgetreten sind.",
+  "assistant.count": "Bestätigte Muster ({kind}): {count}. Die letzten {shown} Szenen werden gezeigt.",
+  "assistant.sample": "Regelbasierte Beobachtungen einer kleinen synthetischen Stichprobe; keine Kausalitäts- oder Scoutingbewertung.",
+  "assistant.pass": "{name} → {target}: {outcome}",
+  "assistant.success": "angekommener Pass",
+  "assistant.failed": "nicht angekommener Pass",
+  "assistant.event": "{name}: {kind}",
+  "assistant.scope": "Team {name}",
+  "assistant.switch": "Spielverlagerungen",
+  "assistant.overload": "lokale Überzahl",
+  "assistant.pressing": "Pressingdurchbrüche",
+  "assistant.shot": "Schuss",
+  "assistant.turnover": "Ballverlust"
 }

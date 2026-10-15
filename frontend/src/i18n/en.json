@@ -181,5 +181,13 @@
   "overloadRule": "After a successful reception, at least 3 attackers and 1 defender within a fixed 15 m radius. Attackers outnumber defenders at every tracking and possession-transition sample for 2 s; the ball carrier remains controlled inside the zone in the same phase. Overlapping findings in the same phase are suppressed for 8 s.",
   "switchOverlay": "Marking: historical cross-field pass · {start}–{end}",
   "overloadOverlay": "Marking: historical zone and counted players at {time}. Green: attacking team; blue: defenders.",
-  "overloadReference": "Reception: {events} · Possession phase {phase}. Zone observed from {start} to confirmation at {confirmed}."
+  "overloadReference": "Reception: {events} · Possession phase {phase}. Zone observed from {start} to confirmation at {confirmed}.",
+  "assistantHint": "Answers use only events available at the paused replay time. Name a player to narrow the scope.",
+  "questionLabel": "Your analysis question",
+  "questionPlaceholder": "Which switches did Theo Wolf play?",
+  "askQuestion": "Ask question",
+  "explainSwitch": "Analyse switches",
+  "explainOverload": "Analyse overloads",
+  "sceneEvidence": "Scene evidence",
+  "openEvidence": "Open evidence at {time}"
 }

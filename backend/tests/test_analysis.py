@@ -47,7 +47,8 @@ def test_api_and_free_explanation(monkeypatch):
     response=client.post('/api/explain',json={'at':10,'player_id':7,'question':'player','language':'de'})
     data=response.json()
     assert data['source']=='deterministic'
-    assert data['event_ids']==['e3']
+    assert set(data['event_ids'])=={'e2','e3'}  # Received pressure escape plus the player's own pass.
+    assert all(scene['at']<=10 for scene in data['scenes'])
     assert '1 von 1' in data['text']
 
 

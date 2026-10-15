@@ -48,3 +48,12 @@ body{padding:0}
 #tl .pattern-filter{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin-bottom:12px;flex-wrap:wrap}#tl .pattern-filter select{width:auto;max-width:100%;min-width:180px}
 
 #tl .scenario-label{width:auto;max-width:100%}#tl .scenario-label select{width:200px;max-width:100%}
+/* Assistant evidence remains readable without adding work to the pitch render loop. */
+.assistant-form {display:grid;gap:8px;margin:16px 0}
+.assistant-form label {font-size:12px;font-weight:600}
+.assistant-form textarea {width:100%;resize:vertical;min-height:66px;border:1px solid var(--line);border-radius:4px;padding:10px;background:var(--surface);color:inherit;font:inherit;font-size:13px}
+.assistant-form textarea:focus-visible {outline:2px solid #479ef5;outline-offset:2px}
+.assistant-form button {justify-self:start}
+.assistant-evidence {display:grid;gap:8px;margin-top:12px}
+#tl .evidence-scene {height:auto;white-space:normal;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px;line-height:1.45;max-width:100%}
+.evidence-scene small {font-size:12px;font-weight:400;color:var(--muted)}
