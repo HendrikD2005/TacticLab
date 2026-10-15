@@ -31,7 +31,7 @@ def generate_match(seed: int = 42) -> Match:
         acceleration*=np.minimum(1,4/np.maximum(np.linalg.norm(acceleration,axis=1,keepdims=True),.001))
         velocity+=acceleration/SAMPLE_HZ
         positions[k]=positions[k-1]+velocity/SAMPLE_HZ
-    players=[Player(id=i,number=NUMBERS[i%11],name=name,team='home' if i<11 else 'away',role='Torwart' if i%11==0 else 'Abwehr' if i%11<5 else 'Mittelfeld' if i%11<8 else 'Angriff') for i,name in enumerate(NAMES)]
+    players=[Player(id=i,number=NUMBERS[i%11],name=name,team='home' if i<11 else 'away',role='goalkeeper' if i%11==0 else 'defender' if i%11<5 else 'midfielder' if i%11<8 else 'forward') for i,name in enumerate(NAMES)]
     routes=[(4,2,5,True,'s1'),(7,5,7,True,'s1'),(10,7,9,True,'s1'),(14,9,8,True,'s1'),(18,8,3,True,'link1'),(20,3,7,True,'s2'),(23,7,10,True,'s2'),(26,10,4,False,'s2'),(30,17,2,False,'link2'),(33,2,7,True,'s3'),(36,7,9,True,'s3'),(39,9,8,True,'s3'),(44,8,4,True,'link3'),(47,4,5,True,'s4'),(50,5,7,True,'s4'),(53,7,9,True,'s4'),(56,9,8,True,'s4')]
     events=[]
     def at(t,player):

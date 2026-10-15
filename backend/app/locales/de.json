@@ -1,0 +1,14 @@
+{
+  "escape.title": "Pressingdurchbruch",
+  "escape.summary": "{passer} findet {receiver} hinter dem Druck. Das Team gewinnt Raum und sichert den Ball.",
+  "escape.explanation": "{before} m Gegnerabstand beim Abspiel, {gain} m Raumgewinn und {after} m Freiraum bei der Annahme. Überspielte Druckspieler: {bypassed}. Nach {retained} Sekunden weiterhin kontrollierter Teamballbesitz.",
+  "escape.limitation": "Regelbasierter Hinweis aus synthetischen Positionsdaten; keine Aussage über Absicht oder eine komplette Pressinglinie.",
+  "metrics": "Bis {time} wurden {completed} von {attempts} Pässen abgeschlossen. Erfolgreiche Pässe mit mindestens zehn Metern Raumgewinn: {progressive}. Unter Druck kamen {pressure_completed} von {pressure_attempts} Pässen an.",
+  "compare": "Erste Hälfte: {first_completed}/{first_attempts} Pässe, {first_progressive} progressiv. Zweite Hälfte: {second_completed}/{second_attempts} Pässe, {second_progressive} progressiv. Kleine synthetische Stichprobe; keine Aussage über taktische Kausalität.",
+  "no_escape": "Bis zu diesem Zeitpunkt ist für das ausgewählte Team kein Pressingdurchbruch nach unserer Regel bestätigt.",
+  "first_period": "Erste Hälfte",
+  "second_period": "Zweite Hälfte",
+  "notice.limit": "Das stündliche KI-Anfragelimit ist erreicht. Berechnete Fakten werden angezeigt.",
+  "notice.https": "Der Azure-Endpunkt muss HTTPS verwenden. Berechnete Fakten werden angezeigt.",
+  "notice.unavailable": "Azure ist nicht verfügbar. Berechnete Fakten werden angezeigt."
+}

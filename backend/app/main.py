@@ -8,6 +8,7 @@ from .data import generate_match
 from .analysis import snapshot
 from .intelligence import MatchIntelligence
 from .ai import configured, explain
+from .i18n import Language
 from .models import AnalysisRequest
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -26,8 +27,8 @@ def health(): return {'status':'ok','ai_enabled':configured(),'data':'synthetic'
 def get_match(scenario: Scenario = 'standard'): return matches[scenario]
 
 @app.get('/api/analysis')
-def get_analysis(at: float=Query(0,ge=0,le=60),player_id: int=Query(7,ge=0,le=21), scenario: Scenario = 'standard'):
-    return snapshot(matches[scenario],at,player_id,engines[scenario])
+def get_analysis(at: float=Query(0,ge=0,le=60),player_id: int=Query(7,ge=0,le=21), scenario: Scenario = 'standard', language: Language = 'en'):
+    return snapshot(matches[scenario],at,player_id,engines[scenario],language)
 
 @app.post('/api/explain')
 async def get_explanation(request: AnalysisRequest): return await explain(matches[request.scenario],request,engines[request.scenario])

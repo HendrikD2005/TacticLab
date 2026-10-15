@@ -1,0 +1,14 @@
+{
+  "escape.title": "Pressure escape",
+  "escape.summary": "{passer} finds {receiver} beyond the pressure. The team gains ground and secures possession.",
+  "escape.explanation": "Nearest opponent: {before} m at release, {gain} m gained and {after} m of space at reception. Pressing opponents bypassed: {bypassed}. Team control confirmed after {retained} seconds.",
+  "escape.limitation": "Rule-based finding from synthetic positions; this does not establish intent or that an entire pressing line was beaten.",
+  "metrics": "By {time}, completed passes: {completed}/{attempts}. Successful passes advancing at least ten metres: {progressive}. Completed under pressure: {pressure_completed}/{pressure_attempts}.",
+  "compare": "First period: {first_completed}/{first_attempts} passes, {first_progressive} progressive. Second period: {second_completed}/{second_attempts} passes, {second_progressive} progressive. Small synthetic sample; this does not establish tactical causality.",
+  "no_escape": "No pressure escape has been confirmed for the selected team at this time under our detection rule.",
+  "first_period": "First period",
+  "second_period": "Second period",
+  "notice.limit": "AI hourly request limit reached. Showing calculated facts.",
+  "notice.https": "The Azure endpoint must use HTTPS. Showing calculated facts.",
+  "notice.unavailable": "Azure unavailable. Showing calculated facts."
+}

@@ -47,3 +47,14 @@ Next: incremental ingestion/live transport, richer multi-pass patterns, structur
 31 backend tests cover independent synthetic positive examples, mirrored attack direction, pressure/space/progression counterexamples, loss and regain, confirmation delay, timeline rewind, five generator seeds and index reuse. Four browser tests cover the existing workflow plus scene evidence, historical canvas marking, fan mode, player filtering and scenario isolation. TypeScript and production build pass.
 
 A local 180-frame Edge sample with the insight overlay, pressure layer and zoom measured median 16.7 ms, p95 17.1 ms, with no frames above 33.4 ms. This short sample is not a cross-device guarantee. Screenshot inspection includes desktop dark/light and a 360 px mobile layout. Camera resize preserves the field point at the viewport centre.
+
+
+## Internationalization
+
+English is the default independently of browser language. The header selector supports English and German; valid preferences persist under `tl-language` in local storage. Invalid or unavailable storage falls back to English without preventing language changes. The provider lives above the scenario workspace, so changing language does not recreate the playback clock or Canvas camera. It updates the document language, title and description as well as visible and accessible labels.
+
+Frontend catalogs live in `frontend/src/i18n/en.json` and `de.json`. Their keys are checked by TypeScript; browser tests check catalog parity, plural forms and interpolation arguments. `useI18n` supplies translation, memoized `Intl.NumberFormat` and plural selection. Canvas labels are formatted outside the frame loop, and chart rows are memoized. Proper names and source event IDs are not translated.
+
+Backend text catalogs live in `backend/app/locales/`. Detection indices contain language-neutral evidence. `/api/analysis` accepts `language=en|de`; `/api/explain` takes the same field in its JSON body. Both default to English. Localization copies visible findings rather than mutating the shared index. Responses include their language; the client rejects stale responses after a language switch, aborts pending explanations and keys explanation caches by language. Player roles use stable codes. API notices and deterministic fallback explanations use the requested language without model calls.
+
+To add a language, extend the language unions, picker and catalogs in both layers, then run catalog parity and end-to-end tests. Initial scope is intentionally English/German; no runtime translation service or new dependency is required.

@@ -121,6 +121,6 @@ def test_scenario_isolation_and_explanation(monkeypatch):
     assert 'sequences' not in client.get('/api/match').json()
     response=client.post('/api/explain',json=dict(at=9,player_id=7,question='pressing',language='en'))
     assert response.json()['event_ids']==['e2']
-    response=client.post('/api/explain',json=dict(at=9,player_id=7,question='pressing',scenario='control'))
+    response=client.post('/api/explain',json=dict(at=9,player_id=7,question='pressing',scenario='control',language='de'))
     assert response.json()['event_ids']==[]
     assert 'kein Pressingdurchbruch' in response.json()['text']

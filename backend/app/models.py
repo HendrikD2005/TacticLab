@@ -42,5 +42,5 @@ class AnalysisRequest(BaseModel):
     at: float = Field(ge=0, le=60)
     player_id: int = Field(ge=0, le=21)
     question: Literal['player', 'pressing', 'compare'] = 'pressing'
-    language: Literal['de', 'en'] = 'de'
+    language: Literal['de', 'en'] = 'en'
 

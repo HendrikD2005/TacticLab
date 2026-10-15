@@ -1,4 +1,5 @@
-import {useEffect,useRef} from 'react';
+import {useEffect,useMemo,useRef} from 'react';
+import {useI18n} from '@/i18n';
 import {select} from 'd3-selection';
 import {zoom,zoomIdentity,type ZoomBehavior,type ZoomTransform} from 'd3-zoom';
 import type {Scene,Layer,TacticalInsight} from '@/lib/types';
@@ -6,7 +7,9 @@ import type {Playback} from '@/lib/playback';
 export interface PitchApi{zoomIn:()=>void;zoomOut:()=>void;reset:()=>void}
 interface Props{scene:Scene;clock:Playback;selected:number;insight:TacticalInsight|null;layer:Layer;follow:boolean;onSelect:(id:number)=>void;onManual:()=>void;api:React.RefObject<PitchApi|null>}
 export default function Pitch({scene,clock,selected,insight,layer,follow,onSelect,onManual,api}:Props){
- const canvasRef=useRef<HTMLCanvasElement>(null);const latest=useRef({selected,insight,layer,follow,onSelect,onManual});latest.current={selected,insight,layer,follow,onSelect,onManual};
+ const {t,language,number}=useI18n();
+ const gainLabel=useMemo(()=>insight?number(insight.evidence.gain_m):'',[insight?.evidence.gain_m,number]);
+ const canvasRef=useRef<HTMLCanvasElement>(null);const latest=useRef({selected,insight,layer,follow,onSelect,onManual,language,gainLabel});latest.current={selected,insight,layer,follow,onSelect,onManual,language,gainLabel};
  useEffect(()=>{const canvas=canvasRef.current!;const ctx=canvas.getContext('2d',{alpha:false})!;let width=0,height=0,dpr=1,frame=0,dirty=true,lastTime=-1,lastSettings='';let camera:ZoomTransform=zoomIdentity;const count=scene.match.players.length;const xy=new Float32Array(count*2);const ball=new Float32Array(2);const selection=select(canvas);
  function transform(){const scale=Math.min((width-48)/105,(height-40)/68);const o=latest.current;if(o.follow){return{s:scale*2.2,x:width/2-xy[o.selected*2]*scale*2.2,y:height/2-xy[o.selected*2+1]*scale*2.2}}return{s:scale*camera.k,x:camera.x+(width/2-52.5*scale)*camera.k,y:camera.y+(height/2-34*scale)*camera.k}}
  const behavior:ZoomBehavior<HTMLCanvasElement,unknown>=zoom<HTMLCanvasElement,unknown>().scaleExtent([1,3.5]).extent(()=>[[0,0],[width,height]]).on('zoom',event=>{camera=event.transform;if(event.sourceEvent)latest.current.onManual();dirty=true});
@@ -33,13 +36,13 @@ export default function Pitch({scene,clock,selected,insight,layer,follow,onSelec
  for(const point of [a,b]){ctx.beginPath();ctx.arc(point[0],point[1],2.5,0,Math.PI*2);ctx.stroke()}
  ctx.lineWidth=.3;ctx.setLineDash([.6,.6]);
  for(const opponent of evidence.opponents){ctx.strokeStyle='#b9d3ff';line(opponent.start[0],opponent.start[1],opponent.end[0],opponent.end[1]);ctx.beginPath();ctx.arc(opponent.start[0],opponent.start[1],2,0,Math.PI*2);ctx.stroke();}
- ctx.setLineDash([]);ctx.font='500 2px Arial';ctx.textAlign='center';ctx.fillStyle='#d2ffeb';ctx.fillText(`+${o.insight.evidence.gain_m} m`,(a[0]+b[0])/2,(a[1]+b[1])/2-2);
+ ctx.setLineDash([]);ctx.font='500 2px Arial';ctx.textAlign='center';ctx.fillStyle='#d2ffeb';ctx.fillText(`+${o.gainLabel} m`,(a[0]+b[0])/2,(a[1]+b[1])/2-2);
  }
  for(let i=0;i<count;i++){const p=scene.match.players[i],x=xy[i*2],y=xy[i*2+1],r=1.25;if(i===o.selected){ctx.strokeStyle='#ffffff';ctx.lineWidth=.35;ctx.beginPath();ctx.arc(x,y,2.1,0,Math.PI*2);ctx.stroke()}ctx.fillStyle=p.team==='home'?'#ffffff':'#2873ff';ctx.strokeStyle=p.team==='home'?'#ffffff':'#a9c9ff';ctx.lineWidth=.25;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=p.team==='home'?'#111111':'#ffffff';ctx.font='500 1.35px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(p.number),x,y+.1);if(i===o.selected){ctx.font=`500 ${Math.max(1.8,11/tr.s)}px Arial`;const name=p.name.split(' ').at(-1)!;const w=ctx.measureText(name).width;ctx.fillStyle='#0b1110';ctx.fillRect(x-w/2-.8,y+3,w+1.6,3.7);ctx.fillStyle='#ffffff';ctx.fillText(name,x,y+4.9)}}ctx.fillStyle='#ffffff';ctx.strokeStyle='#111';ctx.lineWidth=.25;ctx.beginPath();ctx.arc(ball[0],ball[1],.7,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore();}
- function loop(now:number){clock.tick(now);const t=clock.position(),o=latest.current;const settings=`${o.selected}:${o.layer}:${o.follow}:${o.insight?.id??""}`;if(!document.hidden&&(dirty||t!==lastTime||settings!==lastSettings)){draw(t);dirty=false;lastTime=t;lastSettings=settings}frame=requestAnimationFrame(loop)}frame=requestAnimationFrame(loop);
+ function loop(now:number){clock.tick(now);const t=clock.position(),o=latest.current;const settings=`${o.selected}:${o.layer}:${o.follow}:${o.insight?.id??""}:${o.language}`;if(!document.hidden&&(dirty||t!==lastTime||settings!==lastSettings)){draw(t);dirty=false;lastTime=t;lastSettings=settings}frame=requestAnimationFrame(loop)}frame=requestAnimationFrame(loop);
  return()=>{cancelAnimationFrame(frame);ro.disconnect();canvas.removeEventListener('click',click);selection.on('.zoom',null);api.current=null};
  },[scene,clock,api]);
- return <canvas data-insight={insight?.id??''} ref={canvasRef} className="pitch" role="img" aria-label="Animiertes Fußballfeld. Mit Mausrad zoomen, ziehen zum Verschieben; Spieler anklicken oder über die Spielerauswahl auswählen."/>;
+ return <canvas data-insight={insight?.id??''} ref={canvasRef} className="pitch" role="img" aria-label={t('pitchLabel')}/>;
 }
 
 

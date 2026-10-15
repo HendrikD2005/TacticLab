@@ -29,6 +29,7 @@ React 19, TypeScript, Vite, Tailwind CSS 4, shadcn-style locally owned Button co
 - Player/period filters; pass accuracy, progressive passes and pressure-related metrics computed on the server.
 - Three visual layers; automatically detected pressure escapes with historical pitch evidence, player filtering, distinct fan/analyst views and light/dark themes.
 - Explicit possession phases and a two-second confirmation delay; discoveries disappear when scrubbing before their confirmation.
+- English by default, with a persistent English/German language selector for the full UI, analysis and accessibility labels.
 - Guided analysis in German/English with clickable event evidence. Local calculated explanations cost nothing.
 - Optional Azure model wording adapter, disabled by default. It is not yet a multi-step tool-calling agent.
 - A single-container production build. No database, paid feed or cloud infrastructure is required to run locally.

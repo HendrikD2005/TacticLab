@@ -111,20 +111,12 @@ class MatchIntelligence:
                         and (e.end_x-ends[p][0])*direction >= 2]
             if before > PRESSURE_M or after < SPACE_M or after-before < RELIEF_M or not bypassed:
                 continue
-            name = self.players[e.player_id].name
-            receiver = self.players[e.target_id].name
             evidence = dict(gain_m=round(gain, 1), pressure_before_m=round(before, 1),
                             space_after_m=round(after, 1), bypassed=len(bypassed), retained_s=HOLD_S)
             self.insights.append(dict(
                 id='escape-'+e.id, kind='pressing_escape', start=e.release_time, end=e.time,
                 confirmed_at=confirmed, team=team, phase_id=received['phase_id'],
                 player_ids=[e.player_id, e.target_id], event_ids=[e.id], evidence=evidence,
-                title='Pressingdurchbruch',
-                summary=f'{name} findet {receiver} hinter dem Druck. Das Team gewinnt Raum und sichert den Ball.',
-                explanation=f'{before:.1f} m Gegnerabstand beim Abspiel, {gain:.1f} m Raumgewinn '
-                            f'und {after:.1f} m Freiraum bei der Annahme. Überspielte Druckspieler: '
-                            f'{len(bypassed)}. Nach {HOLD_S:g} Sekunden weiterhin kontrollierter Teamballbesitz.',
-                limitation='Regelbasierter Hinweis aus synthetischen Positionsdaten; keine Aussage über Absicht oder eine komplette Pressinglinie.',
                 overlay=dict(start=[e.x,e.y], end=[e.end_x,e.end_y],
                              opponents=[dict(id=p, start=starts[p], end=ends[p]) for p in bypassed]),
             ))
