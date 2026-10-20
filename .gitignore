@@ -12,3 +12,7 @@ frontend/dist/
 artifacts/
 playwright-report/
 test-results/
+
+.coverage
+.ruff_cache/
+.import_linter_cache/

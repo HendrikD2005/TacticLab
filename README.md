@@ -88,6 +88,14 @@ npm run check
 npm run test:e2e
 ```
 
+Quality gates run on `dev`, feature pushes and pull requests into `dev`: static
+correctness, architecture contracts with negative fixtures, backend coverage
+(minimum 90%) on Python 3.12/3.13, grounded evidence evaluation, dependency and
+secret scans, asset budgets, and browser tests against the production Docker
+image. The aggregate `ci` check succeeds only when every gate passes.
+See [docs/quality-gates.md](docs/quality-gates.md) for decisions, commands and
+the current GitHub-plan limitation on required branch checks.
+
 Local browser tests use installed Microsoft Edge; CI installs Chromium. Test artifacts stay in `artifacts/`. npm and pip caches are configured under `.cache/` by the setup script.
 
 ## Production

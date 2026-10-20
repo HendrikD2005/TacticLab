@@ -1,11 +1,20 @@
 {
-  "name": "tacticlab", "version": "0.1.0", "private": true,
+  "name": "tacticlab",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "npm --prefix frontend run build",
     "typecheck": "npm --prefix frontend run typecheck",
     "test:e2e": "playwright test",
-    "check": "npm run typecheck && npm run build"
+    "check": "npm run typecheck && npm run build",
+    "check:architecture": "node quality/check-architecture.mjs && node quality/test-architecture.mjs",
+    "check:bundle": "node quality/check-bundle.mjs",
+    "quality:web": "npm run check && npm run check:architecture && npm run check:bundle"
   },
-  "devDependencies": { "@playwright/test": "^1.56.0" }
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "dependency-cruiser": "18.7.0",
+    "typescript": "5.9.3"
+  }
 }

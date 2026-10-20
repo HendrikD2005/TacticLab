@@ -1,0 +1,26 @@
+[importlinter]
+root_package = app
+include_external_packages = True
+
+[importlinter:contract:offline-core]
+name = Offline analysis stays independent of transport and cloud
+type = forbidden
+source_modules =
+    app.models
+    app.data
+    app.tactics
+    app.intelligence
+    app.routing
+    app.analysis
+    app.i18n
+    app.assistant
+    app.evidence
+    app.recaps
+forbidden_modules =
+    app.main
+    app.live
+    app.ai
+    app.foundry
+    fastapi
+    httpx
+allow_indirect_imports = False

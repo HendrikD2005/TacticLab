@@ -1,22 +1,236 @@
 name: checks
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [dev, 'feature/**']
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  AI_ENABLED: 'false'
+  PIP_DISABLE_PIP_VERSION_CHECK: '1'
+
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  quality:
+    name: Static quality and architecture
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 24
-      - uses: actions/setup-python@v5
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
-      - run: python -m venv .venv
-      - run: .venv/bin/python -m pip install -r backend/requirements.lock
-      - run: npm ci
-      - run: npm --prefix frontend ci
-      - run: npm run check
-      - run: .venv/bin/python -m pytest
-      - run: .venv/bin/python scripts/evaluate.py
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.lock
+            quality/requirements.lock
+      - name: Install locked tools
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r backend/requirements.lock -r quality/requirements.lock
+          npm ci
+          npm --prefix frontend ci
+      - name: Validate workflow syntax and expressions
+        run: |
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz \
+            --output "$RUNNER_TEMP/actionlint.tar.gz"
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
+          "$RUNNER_TEMP/actionlint"
+      - name: Python correctness and import contracts
+        env:
+          PYTHONPATH: backend
+        run: |
+          .venv/bin/python -m ruff check backend evals scripts quality
+          .venv/bin/lint-imports --no-cache
+          .venv/bin/python quality/test_architecture.py
+      - name: Typecheck, production build, architecture and bundle budget
+        run: npm run quality:web
+      - name: Upload build measurements
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bundle-budget
+          path: artifacts/bundle-budget.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+  backend:
+    name: Backend and evidence (Python ${{ matrix.python }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.13']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.lock
+            quality/requirements.lock
+      - name: Install locked dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r backend/requirements.lock -r quality/requirements.lock
+      - name: Tests and coverage floor
+        run: .venv/bin/python -m pytest --cov --cov-branch --cov-report=term-missing --cov-report=xml:artifacts/coverage.xml --junitxml=artifacts/pytest.xml
+      - name: Replay and evidence regression evaluation
+        run: .venv/bin/python scripts/evaluate.py
+      - name: Upload backend evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: backend-${{ matrix.python }}
+          path: |
+            artifacts/coverage.xml
+            artifacts/pytest.xml
+            artifacts/evaluation.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+  security:
+    name: Dependencies and secrets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.lock
+            quality/requirements.lock
+      - name: Install audit tools
+        run: |
+          mkdir -p artifacts
+          python -m venv .venv
+          .venv/bin/python -m pip install -r backend/requirements.lock -r quality/requirements.lock
+      - name: Audit JavaScript tool dependencies
+        run: npm audit --audit-level=high --json > artifacts/npm-root-audit.json
+      - name: Audit frontend dependencies
+        run: npm --prefix frontend audit --audit-level=high --json > artifacts/npm-frontend-audit.json
+      - name: Audit Python application and tools
+        run: .venv/bin/python -m pip_audit -r backend/requirements.lock -r quality/requirements.lock --no-deps --disable-pip --format json --output artifacts/pip-audit.json
+      - name: Scan tracked history for credentials
+        run: |
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz \
+            --output "$RUNNER_TEMP/gitleaks.tar.gz"
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact=100 --no-banner --report-format json --report-path artifacts/gitleaks.json .
+      - name: Upload redacted security results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: security-results
+          path: |
+            artifacts/*audit.json
+            artifacts/gitleaks.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+  browser:
+    name: Production container and browser
+    needs: quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Build production image
+        run: docker build --tag tacticlab:ci .
+      - name: Start unprivileged production server
+        run: |
+          test "$(docker image inspect tacticlab:ci --format '{{.Config.User}}')" = appuser
+          docker run --detach --name tacticlab-ci --publish 127.0.0.1:8000:8000 --env AI_ENABLED=false tacticlab:ci
+          timeout 60 bash -c 'until curl --fail --silent http://127.0.0.1:8000/api/health; do sleep 1; done'
+      - name: Install browser
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: End-to-end tests against packaged application
+        env:
+          CI: 'true'
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8000
+        run: npm run test:e2e
+      - name: Capture container diagnostics
+        if: always()
+        run: |
+          mkdir -p artifacts
+          docker logs tacticlab-ci > artifacts/container.log 2>&1 || true
+          docker rm --force tacticlab-ci || true
+      - name: Upload browser and container evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browser-production
+          path: |
+            artifacts/test-results
+            artifacts/playwright-report
+            artifacts/playwright.xml
+            artifacts/container.log
+          retention-days: 14
+          if-no-files-found: ignore
+
+  ci:
+    name: ci
+    if: always()
+    needs: [quality, backend, security, browser]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Require every gate to succeed
+        env:
+          GATE_RESULTS: ${{ toJSON(needs) }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          results = json.loads(os.environ["GATE_RESULTS"])
+          if set(results) != {"quality", "backend", "security", "browser"}:
+              raise SystemExit("Required gate results are missing or unexpected")
+          rows = ["| Gate | Result |", "| --- | --- |"]
+          rows += [f"| {name} | {job['result']} |" for name, job in results.items()]
+          Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text("\n".join(rows) + "\n")
+          failed = [name for name, job in results.items() if job["result"] != "success"]
+          if failed:
+              raise SystemExit("Required gates did not pass: " + ", ".join(failed))
+          PY
