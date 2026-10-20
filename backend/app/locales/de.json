@@ -46,5 +46,9 @@
   "notice.foundry.validation": "Die Belegauswahl des Modells konnte nicht geprüft werden. Berechnete Fakten werden angezeigt.",
   "notice.foundry.budget": "Foundry hat das Limit für Analyseschritte erreicht. Berechnete Fakten werden angezeigt.",
   "notice.foundry.unavailable": "Foundry ist nicht erreichbar oder hat das Zeitlimit überschritten. Berechnete Fakten werden angezeigt.",
-  "recap.no_patterns": "Bis zu diesem Zeitpunkt ist für dieses Team kein taktisches Muster bestätigt."
+  "recap.no_patterns": "Bis zu diesem Zeitpunkt ist für dieses Team kein taktisches Muster bestätigt.",
+  "evidence.count": "{count} bestätigte Befunde zu {kind} in dieser Auswahl.",
+  "recap.switch_of_play": "Spielverlagerung: {width_m} m über die Feldbreite, bei der Annahme {space_after_m} m zum nächsten Gegner. Ballbesitz für {retained_s} s gesichert.",
+  "recap.local_overload": "Lokale Überzahl: {attackers} Angreifer gegen {defenders} Verteidiger im Radius von {radius_m} m. Vorteil für {retained_s} s gehalten.",
+  "recap.pressing_escape": "Pressingdurchbruch: {gain_m} m Raumgewinn, {bypassed} Gegner überspielt. Ballbesitz für {retained_s} s gesichert."
 }

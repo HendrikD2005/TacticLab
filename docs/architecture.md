@@ -144,3 +144,33 @@ synthetic-data/sample limitation. Both downloads stay on the user's computer.
 Verification: 137 backend tests, targeted browser tests for local/model-selected
 briefs, text/JSON export, language, team, rewind and scene navigation, plus TypeScript
 and production build. Foundry HTTP responses remain simulated; cloud access is deferred.
+
+
+## Routing and first-screen usability (2026-10-20)
+
+The question router now requires supported topic/intent vocabulary as well as
+known roster names. A named player's goal, hat-trick, prediction or unknown-player
+question cannot fall through to passing statistics. Unknown words and mixed
+topics produce the supported-question guidance, with zero model requests.
+This intentionally conservative English/German grammar is not open-ended
+football understanding; extend its examples/tests when adding supported concepts.
+
+The desktop layout places the brief alongside the pitch, keeps transport controls
+within the initial screen at 1440×900 and 1366×768, and folds optional preferences.
+The explicit tactical-example action opens the recorded fixture at 18 seconds,
+selects Theo Wolf and marks the confirmed switch. It is unavailable in live mode.
+Mobile stacks brief, pitch and player analysis without horizontal overflow.
+Compact reports use one evidence-backed sentence group per tactical claim;
+full geometric explanations remain in the scene view. Analysis responses from an
+aborted request are ignored before state update.
+
+
+Final local verification for the Foundry/brief/UI changes: 163 backend tests and
+32 browser tests passed, including the actual paced live stream, both desktop
+viewport targets and 360 px German/English layouts. TypeScript and production
+build passed. A 180-frame sample with playback, pressure overlay and zoom measured
+median 16.7 ms, p95 16.9 ms, with no frame above 33.4 ms. These are short local
+measurements, not cross-device guarantees. No paid model call or cloud deployment
+was made. A final review also corrected explicit team-pass scope, natural English/
+German pass-count questions, and prioritisation of selected scene evidence over
+statistical samples.

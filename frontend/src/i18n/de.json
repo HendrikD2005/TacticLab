@@ -106,7 +106,7 @@
   "source": "Datenquelle",
   "recordedReplay": "Aufgezeichneter Replay",
   "liveSimulation": "Live-Simulation",
-  "replaySourceNote": "Vollständige Aufzeichnung · frei spulbar",
+  "replaySourceNote": "60 Sekunden synthetischer Ausschnitt · frei spulbar",
   "liveSourceNote": "Synthetische Übertragung · Empfang in Echtzeit",
   "feed.connecting": "Verbinde …",
   "feed.receiving": "Live-Empfang",
@@ -182,7 +182,7 @@
   "switchOverlay": "Markierung: historische Verlagerung · {start}–{end}",
   "overloadOverlay": "Markierung: historische Zone und gezählte Spieler bei {time}. Grün: angreifende Mannschaft; Blau: Verteidiger.",
   "overloadReference": "Annahme: {events} · Ballbesitzphase {phase}. Zone beobachtet von {start} bis zur Bestätigung bei {confirmed}.",
-  "assistantHint": "Antworten nutzen nur Ereignisse bis zur pausierten Replay-Zeit. Nenne einen Spieler, um die Auswahl einzugrenzen.",
+  "assistantHint": "Wähle ein Thema: Verlagerungen, Überzahl, Pressing, Spielerpässe oder Phasenvergleich. Du kannst einen Kaderspieler nennen.",
   "questionLabel": "Deine Analysefrage",
   "questionPlaceholder": "Welche Spielverlagerungen spielte Theo Wolf?",
   "askQuestion": "Frage stellen",
@@ -223,5 +223,7 @@
   "downloadBrief": "Kurzbericht herunterladen",
   "reportLocal": "Aus beobachteten Daten berechnet",
   "reportFoundry": "Belegauswahl durch Foundry",
-  "reportCaution": "Synthetischer Ausschnitt; keine Aussage zur gesamten Partie."
+  "reportCaution": "Synthetischer Ausschnitt; keine Aussage zur gesamten Partie.",
+  "demoAction": "Taktikbeispiel zeigen",
+  "scoreContext": "Fester Demo-Spielstand; Torereignisse werden nicht modelliert."
 }

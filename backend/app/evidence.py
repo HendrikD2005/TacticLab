@@ -34,6 +34,9 @@ def pattern_claim(insight, request, player_id):
         tr("fan." + insight["kind"], request.language)
         if request.mode == "fan" else insight["explanation"]
     )
+    if request.question == "recap":
+        description = (insight["summary"] if request.mode == "fan" else
+                       tr("recap." + insight["kind"], request.language, **insight["evidence"]))
     scene = dict(
         id=insight["id"], insight_id=insight["id"], at=insight["confirmed_at"],
         start=insight["start"], end=insight["end"], title=insight["title"],
@@ -81,8 +84,8 @@ class EvidenceTools:
         topic = {"pressing_escape": "pressing", "switch_of_play": "switch", "local_overload": "overload"}
         if kind != "all":
             description = (
-                tr("assistant.count", req.language, kind=tr("assistant." + topic[kind], req.language),
-                   count=len(findings), shown=min(4, len(findings)))
+                tr("evidence.count", req.language, kind=tr("assistant." + topic[kind], req.language),
+                   count=len(findings))
                 if findings else tr("assistant.empty", req.language,
                                     kind=tr("assistant." + topic[kind], req.language))
             )
@@ -125,7 +128,13 @@ class EvidenceTools:
 
 
 def render_selection(base, claims, language, mode):
-    scenes = {s["id"]: s for c in claims for s in c["scenes"]}
+    # Each explicitly selected scene claim stays navigable (at most five).
+    primary = [s for c in claims if c["id"].startswith(("pattern:", "event:")) for s in c["scenes"]]
+    secondary = sorted((s for c in claims for s in c["scenes"]),
+                       key=lambda s: (s["insight_id"] is None, -s["at"]))
+    scenes = {}
+    for scene in primary + secondary:
+        scenes.setdefault(scene["id"], scene)
     return {
         **base,
         "text": " ".join(c["text"] for c in claims) + " " +

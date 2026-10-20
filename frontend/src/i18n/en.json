@@ -106,7 +106,7 @@
   "source": "Data source",
   "recordedReplay": "Recorded replay",
   "liveSimulation": "Live simulation",
-  "replaySourceNote": "Full recorded match · freely seekable",
+  "replaySourceNote": "60-second synthetic clip · freely seekable",
   "liveSourceNote": "Synthetic broadcast · real-time delivery",
   "feed.connecting": "Connecting…",
   "feed.receiving": "Receiving live",
@@ -182,7 +182,7 @@
   "switchOverlay": "Marking: historical cross-field pass · {start}–{end}",
   "overloadOverlay": "Marking: historical zone and counted players at {time}. Green: attacking team; blue: defenders.",
   "overloadReference": "Reception: {events} · Possession phase {phase}. Zone observed from {start} to confirmation at {confirmed}.",
-  "assistantHint": "Answers use only events available at the paused replay time. Name a player to narrow the scope.",
+  "assistantHint": "Try one topic: switches, overloads, pressing, player passing or period comparison. You can name one roster player.",
   "questionLabel": "Your analysis question",
   "questionPlaceholder": "Which switches did Theo Wolf play?",
   "askQuestion": "Ask question",
@@ -223,5 +223,7 @@
   "downloadBrief": "Download short report",
   "reportLocal": "Calculated from observed data",
   "reportFoundry": "Evidence selected by Foundry",
-  "reportCaution": "Synthetic sample; no conclusion about the entire match."
+  "reportCaution": "Synthetic sample; no conclusion about the entire match.",
+  "demoAction": "Show tactical example",
+  "scoreContext": "Fixed demo score; no goal events are modelled."
 }

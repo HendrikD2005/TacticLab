@@ -7,7 +7,8 @@ test('invalid preferences are safe',()=>{
 });
 
 test('favourites persist and fan explanations keep replay evidence',async({page})=>{
- await page.goto('/');await page.getByLabel('Match scenario').selectOption('tactics');
+ await page.goto('/');await page.locator('.personalization summary').click();await page.getByLabel('Match scenario').selectOption('tactics');
+ await page.locator('.personalization summary').click();
  await page.getByLabel('Favourite team',{exact:true}).selectOption('away');
  await page.getByLabel('Favourite player',{exact:true}).selectOption('Theo Wolf');
  await page.getByRole('button',{name:'Fan',exact:true}).click();
@@ -48,7 +49,7 @@ test('favourites persist and fan explanations keep replay evidence',async({page}
 
 test('preferences survive workspace changes without browser storage',async({page})=>{
  await page.addInitScript(()=>{Storage.prototype.setItem=()=>{throw new Error('blocked')};Storage.prototype.getItem=()=>{throw new Error('blocked')}});
- await page.goto('/');await page.getByLabel('Favourite player',{exact:true}).selectOption('Finn Roth');
+ await page.goto('/');await page.locator('.personalization summary').click();await page.getByLabel('Favourite player',{exact:true}).selectOption('Finn Roth');
  await page.getByLabel('Favourite team',{exact:true}).selectOption('home');
  await page.getByRole('button',{name:'Fan',exact:true}).click();
  await expect(page.getByRole('region',{name:'Your match preferences'})).toContainText('only for this visit');

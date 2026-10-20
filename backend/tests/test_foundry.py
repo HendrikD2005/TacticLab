@@ -203,3 +203,16 @@ def test_old_quota_entries_expire():
     foundry.calls.append(time.monotonic()-3601)
     foundry.reserve(1)
     assert len(foundry.calls) == 1
+
+
+def test_selected_tactical_scenes_take_priority_over_statistical_samples():
+    from app.evidence import render_selection
+    request=AnalysisRequest(scenario="tactics",at=60,player_id=1,question="overload")
+    base,_,_=answer(matches["tactics"],request,engines["tactics"])
+    tools=EvidenceTools(matches["tactics"],request,engines["tactics"],base)
+    patterns=tools.patterns("local_overload")
+    result=render_selection(base,tools.statistics()+patterns,request.language,request.mode)
+    assert len(result["scenes"])<=6
+    expected={scene["id"] for claim in patterns for scene in claim["scenes"]}
+    assert expected <= {scene["id"] for scene in result["scenes"]}
+    assert "Showing the latest" not in result["text"]

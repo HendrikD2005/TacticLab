@@ -3,24 +3,17 @@ import re
 from .analysis import snapshot
 from .i18n import text as tr
 
-TOPICS = {
-    'switch': r'switch|verlager',
-    'overload': r'overload|überzahl|ueberzahl|numerical advantage',
-    'pressing': r'pressing|pressure|druck',
-    'compare': r'compar|vergleich|period|spielphas',
-}
+from .routing import route_query
+
 KINDS = {'switch': 'switch_of_play', 'overload': 'local_overload', 'pressing': 'pressing_escape'}
 
 
 def answer(match, request, intelligence):
     query = request.query.strip().casefold()
-    named = [p for p in match.players if any(re.search(r'\b'+re.escape(name.casefold())+r'\b', query)
-             for name in (p.name, p.name.split()[-1]))] if query else []
-    topics = [topic for topic, pattern in TOPICS.items() if re.search(pattern, query)]
-    player = named[0] if len(named) == 1 else match.players[request.player_id]
-    topic = topics[0] if topics else ('player' if query else request.question)
-    unsupported = bool(query) and (len(topics)>1 or len(named)>1 or not (topics or named or re.search(r'player|spieler|pass', query)))
-    player_scope = topic != 'compare' and (bool(named) or topic == 'player' or bool(re.search(r'player|spieler', query)))
+    topic, player, unsupported = route_query(match, request)
+    named = bool(query) and any(re.search(r'\b'+re.escape(name.casefold())+r'\b',query) for name in (player.name,player.name.split()[-1]))
+    team_scope = bool(re.search(r'\b(?:team|teams|mannschaft)\b',query))
+    player_scope = topic != 'compare' and not team_scope and (bool(named) or topic == 'player' or bool(re.search(r'player|spieler', query)))
     facts = snapshot(match, request.at, player.id, intelligence, request.language)
     language = request.language
     fan = request.mode == 'fan'

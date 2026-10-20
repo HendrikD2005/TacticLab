@@ -40,7 +40,7 @@ def test_report_fan_language_and_team_scope():
     fan = client.get(path + "&mode=fan").json()["recap"]
     away = client.get("/api/analysis?scenario=tactics&at=18&player_id=12").json()["recap"]
     assert fan["text"] != analyst["text"]
-    assert fan["mode"] == "fan" and "mehr" in fan["text"]
+    assert fan["mode"] == "fan" and "Angreifer" in fan["text"]
     assert away["scope"] == "Team Riverside"
     assert not any(c["id"].startswith("pattern:") for c in away["claims"])
     assert client.get(path + "&mode=unknown").status_code == 422

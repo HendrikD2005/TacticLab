@@ -50,7 +50,7 @@ The live feed is a paced simulation of the seeded fixtures, not an external matc
 
 ## Tactical patterns
 
-Choose **Switches & overloads** (German: **Verlagerung & Überzahl**) in the scenario selector. In recorded replay, seek to **62:11** for the confirmed cross-field pass or **62:18** for the first confirmed **3 v 2**. The same findings arrive at those times in live simulation. Existing build-up scenarios retain their pressure-escape examples.
+Click **Show tactical example** to open the recorded example at 62:18 with a marked switch and grounded brief. Or choose **Switches & overloads** (German: **Verlagerung & Überzahl**) in the scenario selector. In recorded replay, seek to **62:11** for the confirmed cross-field pass or **62:18** for the first confirmed **3 v 2**. The same findings arrive at those times in live simulation. Existing build-up scenarios retain their pressure-escape examples.
 
 The **Tactical pattern** filter separates pressure escapes, switches and local overloads. Select a finding to pause at confirmation and show its explanation and evidence. Switches show historical pass endpoints; overloads show the receiving zone and counted players at confirmation. Fan mode summarizes the finding; analyst mode includes numerical evidence, explicit rules and limitations. Both languages, player focus, scene saving and JSON exports work with all kinds.
 
@@ -62,7 +62,7 @@ Use **Events** in the navigation to search player names or event IDs and filter 
 
 **Save moment** pauses the view and opens a note for the current time/player. Saved scenes reopen their player and any selected tactical finding. Notes are stored in this browser per match/scenario, capped at 100 scenes with 1,000 characters each. They are not synced to GitHub or a server. If browser storage is unavailable, a notice explains that notes survive only in memory until reload. In a new live session, saved future scenes remain locked until their frames arrive.
 
-**Export report** downloads JSON with the current analysis, completed events and saved notes up to the selected time. Future events/notes are excluded even when the full recorded fixture is loaded. Reports use schema version 1 and identify all data as synthetic; note text is exported as entered. Export is available when analysis for the current replay second is ready.
+**Export report** downloads JSON with the current analysis, completed events and saved notes up to the selected time. Future events/notes are excluded even when the full recorded fixture is loaded. Reports use schema version 2 and identify all data as synthetic; note text is exported as entered. Export is available when analysis for the current replay second is ready.
 
 **Space** toggles playback and **Left/Right** seek five seconds; keyboard shortcuts leave text fields, buttons and native controls alone. Both shortcuts and toolbar steps respect the live buffer boundary.
 
@@ -109,7 +109,7 @@ FastAPI serves `frontend/dist` after a build. Azure Container Apps can run this 
 - `backend/app/live.py`: paced synthetic broadcaster and bounded live sessions.
 - `backend/app/data.py`: seeded event and tracking fixture.
 - `backend/app/analysis.py`: metrics with strict replay-time cutoffs.
-- `backend/app/ai.py`: deterministic explanation + opt-in Azure adapter.
+- `backend/app/ai.py`: local analysis + opt-in Foundry tool agent (`foundry.py`).
 - `docs/architecture.md`: decisions, performance targets and limitations.
 - `docs/metrics.md`: metric definitions and synthetic data assumptions.
 
@@ -118,7 +118,7 @@ This is the foundation, not a completed hackathon submission. A broader scenario
 
 ### Replay-aware analysis assistant
 
-The assistant accepts switches of play, local overloads, pressing, player passing and period comparisons in English or German. Quick actions use the selected player's team; player analysis uses the selected player. A full name or surname from the roster narrows free-text questions to that player. Ask one topic and one player at a time. Unsupported or multi-topic questions return a scope hint instead of a fabricated answer. This is deterministic intent routing, not a general-purpose football chatbot; no paid service is required.
+The assistant accepts switches of play, local overloads, pressing, player passing and period comparisons in English or German. Quick actions use the selected player's team; player analysis uses the selected player. A full name or surname from the roster narrows free-text questions to that player; explicitly asking about the team retains team scope. Ask one topic and one player at a time. Unsupported or multi-topic questions return a scope hint instead of a fabricated answer. This is deterministic intent routing, not a general-purpose football chatbot; no paid service is required.
 
 Questions pause the replay at its exact position. Responses include the time, scope and up to six evidence cards (at most four tactical patterns). Tactical cards seek to the confirmation time and select the corresponding pitch overlay; ordinary event cards seek to the event and select its passer. Seeking, changing players or changing language invalidates pending answers, including sub-second seeks. Live requests retain the server's producer-time bound, and buffered replay still uses the viewed time.
 
@@ -126,7 +126,7 @@ Try the **Switches & overloads** fixture at **62:18**, then ask “Which switche
 
 ### Personalised fan view
 
-Choose a favourite team and player independently above the replay. Preferences and the viewing mode persist in browser storage; if storage is blocked, they remain available for the current app visit, including scenario and source changes. The current synthetic fixtures share the same roster and home/away teams. Player preferences use roster names, not array positions; an unavailable player is not silently replaced with another favourite.
+Expand **Your match preferences** above the replay to choose a favourite team and player independently. Preferences and the viewing mode persist in browser storage; if storage is blocked, they remain available for the current app visit, including scenario and source changes. The current synthetic fixtures share the same roster and home/away teams. Player preferences use roster names, not array positions; an unavailable player is not silently replaced with another favourite.
 
 In Fan mode, **Favourite moments only** includes confirmed moments for the favourite team OR the favourite player. Turning it off restores all moments; the existing selected-player filter still applies. **Watch favourite player** selects the player and enables camera follow without moving the replay time. Analyst mode keeps the complete technical view. Fan details explain what happened and why it can matter, with an explicit reminder of the limits of this short synthetic sample.
 

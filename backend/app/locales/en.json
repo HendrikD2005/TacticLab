@@ -46,5 +46,9 @@
   "notice.foundry.validation": "The model's evidence selection could not be verified. Showing calculated facts.",
   "notice.foundry.budget": "Foundry reached its analysis step limit. Showing calculated facts.",
   "notice.foundry.unavailable": "Foundry is unavailable or timed out. Showing calculated facts.",
-  "recap.no_patterns": "No tactical pattern has been confirmed for this team by this time."
+  "recap.no_patterns": "No tactical pattern has been confirmed for this team by this time.",
+  "evidence.count": "{count} confirmed {kind} findings in this scope.",
+  "recap.switch_of_play": "Switch of play: {width_m} m across the pitch, with {space_after_m} m to the nearest opponent at reception. Possession retained for {retained_s} s.",
+  "recap.local_overload": "Local overload: {attackers} attackers versus {defenders} defenders within {radius_m} m. Advantage maintained for {retained_s} s.",
+  "recap.pressing_escape": "Pressure escape: {gain_m} m gained, {bypassed} opponents bypassed. Possession retained for {retained_s} s."
 }
