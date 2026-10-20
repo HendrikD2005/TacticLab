@@ -1,11 +1,12 @@
 # TacticLab demo and submission kit
 
-Prepared on 2026-10-20. This document separates implemented work from the
-external steps still needed before submission.
+This document separates implemented work from the external steps still needed
+before submission.
 
 ## Review the application locally
 
-Use the repository's `dev` branch and follow the setup commands in [README](../README.md).
+Use the repository's `main` branch for the release, or `dev` for ongoing integration,
+and follow the setup commands in [README](../README.md).
 No Azure account is required for the default local mode.
 
 1. Open the application in a fresh browser.
@@ -65,8 +66,8 @@ for interpretation. Test artifacts are local and ignored by Git.
   Prices and live latency are currently **unmeasured**, not zero.
 - [ ] Choose demo hosting/access and test it in a fresh browser outside the
   development machine. Public hosting was not provisioned by this change.
-- [ ] Confirm reviewer access to the repository and submitted `dev` revision.
-  Repository visibility was not changed; `main` remains protected.
+- [ ] Confirm reviewer access to the repository and record the submitted `main`
+  commit so the review can be reproduced independently of later development.
 - [ ] Select the intended project licence.
 - [ ] Record the video, choose its final URL and verify access without the author's login.
 - [ ] Submit the project and retain the portal's submission confirmation.
@@ -75,7 +76,7 @@ for interpretation. Test artifacts are local and ignored by Git.
 | --- | --- |
 | Project | TacticLab |
 | Repository | `https://github.com/HendrikD2005/TacticLab` — reviewer access to be verified |
-| Review branch | `dev` |
+| Review branch | `main`; record the submitted commit |
 | Public demo URL | Not configured |
 | Video URL | Not recorded |
 | Real Foundry verification | Deferred until cloud credentials are configured |

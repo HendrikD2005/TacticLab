@@ -1,7 +1,7 @@
 # Quality gates and integration policy
 
-TacticLab uses the `checks` workflow on pushes to `dev` and `feature/**`, and on
-pull requests targeting `dev`. It never deploys or promotes to `main`. The stable
+TacticLab uses the `checks` workflow on pushes to `main`, `dev` and `feature/**`, and on
+pull requests targeting `main` or `dev`. It never deploys or promotes branches. The stable
 aggregate check is **`ci`**: it fails if any prerequisite fails, is cancelled or
 is skipped. Feature branches are integrated only after the exact commit has a
 green run; the integrated `dev` revision is checked again.
@@ -92,17 +92,20 @@ unavailable second reviewer or change `main`. Existing stronger protections
 must be preserved. Check GitHub settings separately: workflow YAML cannot
 enforce branch protection by itself.
 
-At rollout on 2026-10-20, GitHub returned HTTP 403 for both protection and
-ruleset APIs: this private repository requires GitHub Pro for those features.
-Consequently, CI failures are enforced by the workflow, but GitHub does not yet
-block a maintainer from merging/pushing around them. Integration must follow
-the green-commit procedure below until the account supports required checks.
-Repository visibility, billing and `main` are outside this change.
+Verify required-check enforcement in the repository settings; a successful
+workflow does not itself prevent a maintainer from pushing around failed checks.
+Enable Secret Scanning and Push Protection where available. These complement
+the history scan in CI by detecting supported credentials and blocking new
+secret-bearing pushes. Never bypass a secret alert simply to complete a release.
 
 Before every new feature: fetch/integrate current `origin/dev`, create a new
 `feature/<name>`, run the applicable local gates, push that feature, verify the
 exact GitHub revision, merge into `dev`, push and verify `dev`. Never reset or
 force-push a failed feature to make a check disappear. Fix and retest it.
+
+Promotion from `dev` to `main` requires the repository owner's explicit
+approval. Promote only the verified `dev` revision and check the resulting
+`main` workflow. Keep `dev` current with any completed release fixes.
 
 ## Deliberately deferred
 

@@ -2,9 +2,9 @@ name: checks
 
 on:
   push:
-    branches: [dev, 'feature/**']
+    branches: [main, dev, 'feature/**']
   pull_request:
-    branches: [dev]
+    branches: [main, dev]
   workflow_dispatch:
 
 permissions:

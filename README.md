@@ -50,7 +50,7 @@ The live feed is a paced simulation of the seeded fixtures, not an external matc
 
 ## Tactical patterns
 
-Click **Show tactical example** to open the recorded example at 62:18 with a marked switch and grounded brief. Or choose **Switches & overloads** (German: **Verlagerung & Überzahl**) in the scenario selector. In recorded replay, seek to **62:11** for the confirmed cross-field pass or **62:18** for the first confirmed **3 v 2**. The same findings arrive at those times in live simulation. Existing build-up scenarios retain their pressure-escape examples.
+Click **Show tactical example** to open the recorded example at 62:18 with a marked switch and grounded brief. Or choose **Switches & overloads** in the scenario selector. In recorded replay, seek to **62:11** for the confirmed cross-field pass or **62:18** for the first confirmed **3 v 2**. The same findings arrive at those times in live simulation. Existing build-up scenarios retain their pressure-escape examples.
 
 The **Tactical pattern** filter separates pressure escapes, switches and local overloads. Select a finding to pause at confirmation and show its explanation and evidence. Switches show historical pass endpoints; overloads show the receiving zone and counted players at confirmation. Fan mode summarizes the finding; analyst mode includes numerical evidence, explicit rules and limitations. Both languages, player focus, scene saving and JSON exports work with all kinds.
 
@@ -88,13 +88,13 @@ npm run check
 npm run test:e2e
 ```
 
-Quality gates run on `dev`, feature pushes and pull requests into `dev`: static
+Quality gates run on `main`, `dev`, feature pushes and pull requests into either integration or release branch: static
 correctness, architecture contracts with negative fixtures, backend coverage
 (minimum 90%) on Python 3.12/3.13, grounded evidence evaluation, dependency and
 secret scans, asset budgets, and browser tests against the production Docker
 image. The aggregate `ci` check succeeds only when every gate passes.
 See [docs/quality-gates.md](docs/quality-gates.md) for decisions, commands and
-the current GitHub-plan limitation on required branch checks.
+repository enforcement settings.
 
 Local browser tests use installed Microsoft Edge; CI installs Chromium. Test artifacts stay in `artifacts/`. npm and pip caches are configured under `.cache/` by the setup script.
 
@@ -131,7 +131,7 @@ The assistant accepts switches of play, local overloads, pressing, player passin
 
 Questions pause the replay at its exact position. Responses include the time, scope and up to six evidence cards (at most four tactical patterns). Tactical cards seek to the confirmation time and select the corresponding pitch overlay; ordinary event cards seek to the event and select its passer. Seeking, changing players or changing language invalidates pending answers, including sub-second seeks. Live requests retain the server's producer-time bound, and buffered replay still uses the viewed time.
 
-Try the **Switches & overloads** fixture at **62:18**, then ask “Which switches did Theo Wolf play?” or “Welche Überzahl hatte Finn Roth?”. The switch opens at 62:11 and the overload at 62:18. No finding is disclosed before confirmation.
+Try the **Switches & overloads** fixture at **62:18**, then ask “Which switches did Theo Wolf play?” or “Show overloads for Finn Roth”. The switch opens at 62:11 and the overload at 62:18. No finding is disclosed before confirmation.
 
 ### Personalised fan view
 
@@ -150,3 +150,9 @@ The match brief updates with the replay and selected player's team, in English o
 ## Demo and evaluation kit
 
 Follow [docs/submission.md](docs/submission.md) for a fresh-browser walkthrough, a 110-second demo outline and the remaining external submission steps. [docs/evaluation.md](docs/evaluation.md) describes the repeatable offline evaluation and its synthetic-data limits. Registration, repository access, public hosting, licensing, the video URL and real Foundry verification still need to be completed or confirmed externally.
+
+## Contribution language and branches
+
+Write documentation, code comments, commit messages and development instructions in English. Keep German application translations and bilingual regression fixtures: both interface languages are supported. Local audits, account metadata and review reports belong outside the repository; generated test output belongs in ignored `artifacts/`.
+
+Start each feature on `feature/<name>` from the updated `dev` branch. Integrate only reviewed work with passing checks into `dev`. Promote `dev` to `main` only with the repository owner's explicit approval; never rewrite published history or bypass failed checks.

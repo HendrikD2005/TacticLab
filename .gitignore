@@ -16,3 +16,8 @@ test-results/
 .coverage
 .ruff_cache/
 .import_linter_cache/
+
+# Local review material must never be committed.
+/audit-public/
+/ci-work/
+/review-evidence/
