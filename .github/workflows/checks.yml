@@ -17,5 +17,6 @@ jobs:
       - run: npm --prefix frontend ci
       - run: npm run check
       - run: .venv/bin/python -m pytest
+      - run: .venv/bin/python scripts/evaluate.py
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

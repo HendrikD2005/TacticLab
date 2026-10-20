@@ -84,6 +84,7 @@ behaviour and an explicit live smoke test are in [docs/foundry.md](docs/foundry.
 ```powershell
 npm run check
 .venv\Scripts\python.exe -m pytest
+.venv\Scripts\python.exe scripts\evaluate.py
 npm run test:e2e
 ```
 
@@ -137,3 +138,7 @@ Preference writes occur only on user changes. Existing bounded snapshots supply 
 ## Grounded short reports
 
 The match brief updates with the replay and selected player's team, in English or German and analyst/fan mode. Its claims reference completed events and confirmed tactical scenes. Download a readable text brief from the card or include it in the JSON report (schema 2). Foundry evidence selection is an explicit action when configured; automatic playback analysis stays local.
+
+## Demo and evaluation kit
+
+Follow [docs/submission.md](docs/submission.md) for a fresh-browser walkthrough, a 110-second demo outline and the remaining external submission steps. [docs/evaluation.md](docs/evaluation.md) describes the repeatable offline evaluation and its synthetic-data limits. Registration, repository access, public hosting, licensing, the video URL and real Foundry verification still need to be completed or confirmed externally.

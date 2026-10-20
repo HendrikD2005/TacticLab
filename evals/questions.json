@@ -1,0 +1,18 @@
+[
+  {"query":"Did Theo Wolf score a hat trick?","language":"en","unsupported":true},
+  {"query":"Hat Theo Wolf einen Hattrick erzielt?","language":"de","unsupported":true},
+  {"query":"What is Theo Wolf's xG?","language":"en","unsupported":true},
+  {"query":"Predict the winner based on pressing","language":"en","unsupported":true},
+  {"query":"Wie viele Tore und Pässe hatte Finn Roth?","language":"de","unsupported":true},
+  {"query":"Which switches did Messi play?","language":"en","unsupported":true},
+  {"query":"Switches and overloads","language":"en","unsupported":true},
+  {"query":"Compare Theo Wolf and Leon West","language":"en","unsupported":true},
+  {"query":"Which switches did Theo Wolf play?","language":"en","unsupported":false,"topic":"switch","player_id":1,"scope_type":"player"},
+  {"query":"Welche Spielverlagerungen spielte Theo Wolf?","language":"de","unsupported":false,"topic":"switch","player_id":1,"scope_type":"player"},
+  {"query":"How many passes did Theo Wolf complete?","language":"en","unsupported":false,"topic":"player","player_id":1,"scope_type":"player"},
+  {"query":"Wie viele Pässe spielte Theo Wolf?","language":"de","unsupported":false,"topic":"player","player_id":1,"scope_type":"player"},
+  {"query":"Explain team passes","language":"en","unsupported":false,"topic":"player","scope_type":"team"},
+  {"query":"Zeige die Passstatistik der Mannschaft","language":"de","unsupported":false,"topic":"player","scope_type":"team"},
+  {"query":"Welche Überzahl hatte Finn Roth?","language":"de","unsupported":false,"topic":"overload","player_id":5,"scope_type":"player"},
+  {"query":"Compare periods","language":"en","unsupported":false,"topic":"compare","scope_type":"team"}
+]
