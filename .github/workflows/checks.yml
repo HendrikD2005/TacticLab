@@ -174,7 +174,9 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
       - name: Build production image
         run: docker build --tag tacticlab:ci .
       - name: Start unprivileged production server
@@ -185,6 +187,8 @@ jobs:
       - name: Install browser
         run: |
           npm ci
+          # Tests also import notebook/preference helpers that depend on React.
+          npm --prefix frontend ci
           npx playwright install --with-deps chromium
       - name: End-to-end tests against packaged application
         env:
