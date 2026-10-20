@@ -1,6 +1,7 @@
 from collections import deque
 from copy import deepcopy
 from string import Formatter
+import time
 import httpx
 import pytest
 from fastapi.testclient import TestClient
@@ -45,11 +46,11 @@ def test_explanations_default_to_english(monkeypatch,question):
 @pytest.mark.parametrize('language,expected',[('en','Showing calculated facts'),('de','Berechnete Fakten werden angezeigt')])
 @pytest.mark.parametrize('failure',['limit','https','unavailable'])
 def test_fallback_notices_are_localized(monkeypatch,language,expected,failure):
-    from app import ai
-    monkeypatch.setattr(ai,'configured',lambda:True)
-    monkeypatch.setattr(ai,'calls',deque())
-    monkeypatch.setenv('AI_MAX_CALLS_PER_HOUR','0' if failure=='limit' else '20')
-    monkeypatch.setenv('AZURE_AI_BASE_URL','http://invalid' if failure=='https' else 'https://invalid')
+    from app import foundry
+    monkeypatch.setenv('AI_ENABLED','true')
+    monkeypatch.setattr(foundry,'calls',deque([time.monotonic()]*20 if failure=='limit' else []))
+    monkeypatch.setenv('AI_MAX_CALLS_PER_HOUR','20')
+    monkeypatch.setenv('AZURE_AI_BASE_URL','http://invalid' if failure=='https' else 'https://test.openai.azure.com/openai/v1/')
     monkeypatch.setenv('AZURE_AI_API_KEY','test-only')
     monkeypatch.setenv('AZURE_AI_DEPLOYMENT','test-only')
     async def unavailable(*args,**kwargs): raise httpx.ConnectError('simulated offline')

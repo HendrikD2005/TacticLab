@@ -37,7 +37,7 @@ React 19, TypeScript, Vite, Tailwind CSS 4, shadcn-style locally owned Button co
 - Explicit possession phases and a two-second confirmation delay; discoveries disappear when scrubbing before their confirmation.
 - English by default, with a persistent English/German language selector for the full UI, analysis and accessibility labels.
 - Guided analysis in German/English with clickable event evidence. Local calculated explanations cost nothing.
-- Optional Azure model wording adapter, disabled by default. It is not yet a multi-step tool-calling agent.
+- Optional Microsoft Foundry tool-calling agent with validated evidence selection, request limits, visible provenance and deterministic fallback.
 - A single-container production build. No database, paid feed or cloud infrastructure is required to run locally.
 
 ## Live simulation and replay
@@ -66,11 +66,18 @@ Use **Events** in the navigation to search player names or event IDs and filter 
 
 **Space** toggles playback and **Left/Right** seek five seconds; keyboard shortcuts leave text fields, buttons and native controls alone. Both shortcuts and toolbar steps respect the live buffer boundary.
 
-## Optional Azure / Foundry
+## Microsoft Foundry (optional)
 
-Copy `.env.example` to `.env`. Set the base URL of your Azure OpenAI v1 deployment, its key and deployment name. Only set `AI_ENABLED=true` when you want model calls. Keys never enter frontend code. The backend uses `/chat/completions`; your deployment must support this API and `max_completion_tokens`.
+The server now runs a bounded tool-calling agent against a Microsoft Foundry
+Models deployment. The model selects analysis tools, receives replay-bounded
+facts, then selects structured claim IDs. The server verifies the selection and
+renders trusted English/German statements with scene evidence. This is not
+unrestricted model-written prose.
 
-The adapter supplies calculated facts to the model, caps output at 450 tokens and limits requests per process to 20/hour by default. This is a development safeguard, NOT a billing cap or multi-instance rate limiter. It falls back to deterministic facts on timeout/failure. AI prose is not yet automatically fact-validated. Authentication, a shared quota and factual validation are required before opening paid AI to the public. No Azure resources or subscription have been created.
+Copy `.env.example` to `.env`, set the resource's v1 inference URL, API key and
+deployment name, and enable `AI_ENABLED` when ready. Nothing is provisioned
+automatically. The default remains fully local. Setup, protocol, limits, failure
+behaviour and an explicit live smoke test are in [docs/foundry.md](docs/foundry.md).
 
 ## Checks
 
@@ -106,7 +113,7 @@ FastAPI serves `frontend/dist` after a build. Azure Container Apps can run this 
 - `docs/architecture.md`: decisions, performance targets and limitations.
 - `docs/metrics.md`: metric definitions and synthetic data assumptions.
 
-This is the foundation, not a completed hackathon submission. A broader scenario generator, multi-pass tactical detection, calibrated metrics, incremental detection for external feeds, structured AI validation and the final submission assets remain to be built. No licence has been selected yet.
+This is the foundation, not a completed hackathon submission. A broader scenario generator, multi-pass tactical detection, calibrated metrics, incremental detection for external feeds, external-feed integration and the final submission assets remain to be built. No licence has been selected yet.
 
 
 ### Replay-aware analysis assistant

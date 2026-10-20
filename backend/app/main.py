@@ -9,6 +9,7 @@ from .data import generate_match, generate_tactical_match
 from .analysis import snapshot
 from .intelligence import MatchIntelligence
 from .ai import configured, explain
+from .foundry import status as ai_status
 from .i18n import Language
 from .models import AnalysisRequest, LiveRequest
 from .live import LiveSessions
@@ -25,7 +26,7 @@ match, intelligence = matches['standard'], engines['standard']
 live_sessions = LiveSessions(matches)
 
 @app.get('/api/health')
-def health(): return {'status':'ok','ai_enabled':configured(),'data':'synthetic'}
+def health(): return {'status':'ok','ai_enabled':configured(),'data':'synthetic','ai':ai_status()}
 
 @app.get('/api/match')
 def get_match(scenario: Scenario = 'standard'): return matches[scenario]

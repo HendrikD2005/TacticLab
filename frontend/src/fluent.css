@@ -64,3 +64,5 @@ body{padding:0}
 .personalization .sample {margin:8px 0 0}
 .fan-explanation {border-left:2px solid var(--green);padding-left:12px;margin:16px 0}
 @media(max-width:600px){#tl .personalization{padding:12px 16px}.personalization-fields label{width:100%;min-width:0}}
+
+#tl .agent-trace{margin:12px 0;border-top:1px solid var(--line);padding-top:12px;font-size:12px}#tl .agent-trace summary{cursor:pointer;font-weight:600}#tl .agent-trace ol{padding-left:20px}#tl .agent-trace li{margin:5px 0}

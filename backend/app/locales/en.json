@@ -38,5 +38,12 @@
   "fan.switch_of_play": "Moving the ball to the other side can give a teammate more room when one side is crowded. It does not necessarily create a scoring chance.",
   "fan.local_overload": "Having more teammates nearby can offer more passing options. An opponent can still block the route to a teammate.",
   "fan.caution": "This is a short simulated match. These moments do not prove how good a team or player is.",
-  "fan.metrics": "By {time}, {completed} of {attempts} passes reached a teammate. {progressive} successful passes moved the ball at least ten metres closer to goal."
+  "fan.metrics": "By {time}, {completed} of {attempts} passes reached a teammate. {progressive} successful passes moved the ball at least ten metres closer to goal.",
+  "notice.foundry.configuration": "Foundry is not fully configured. Showing calculated facts.",
+  "notice.foundry.endpoint": "The Foundry endpoint configuration is invalid. Showing calculated facts.",
+  "notice.foundry.quota": "Foundry hourly model-call limit reached. Showing calculated facts.",
+  "notice.foundry.busy": "Foundry is busy. Showing calculated facts.",
+  "notice.foundry.validation": "The model's evidence selection could not be verified. Showing calculated facts.",
+  "notice.foundry.budget": "Foundry reached its analysis step limit. Showing calculated facts.",
+  "notice.foundry.unavailable": "Foundry is unavailable or timed out. Showing calculated facts."
 }

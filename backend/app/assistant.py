@@ -30,7 +30,7 @@ def answer(match, request, intelligence):
     scope = player.name if player_scope else tr('assistant.scope',language,name='Northbridge' if player.team=='home' else 'Riverside')
     result = dict(source='deterministic', mode=request.mode, text='', event_ids=[], scenes=[], at=request.at,
                   player_id=player.id, language=language, scenario=match.scenario, topic=topic,
-                  scope=scope, context=tr('assistant.context',language,time=timestamp,scope=scope), unsupported=unsupported)
+                  scope=scope, scope_type='player' if player_scope else 'team', context=tr('assistant.context',language,time=timestamp,scope=scope), unsupported=unsupported)
     if unsupported:
         result['text'] = tr('assistant.unsupported',language)
         return result, facts, player

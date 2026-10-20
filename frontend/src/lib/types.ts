@@ -17,6 +17,8 @@ export type TacticalInsight=InsightBase & (
 );
 export interface Analysis{session_id:string|null;language:'en'|'de';scenario:Scenario;possession:Possession;insights:TacticalInsight[];at:number;player_id:number;player:Metrics;team:Metrics;comparison:({label:string}&Metrics)[]}
 export interface EvidenceScene{id:string;insight_id:string|null;at:number;start:number;end:number;title:string;reason:string;player_id:number;event_ids:string[]}
-export interface Explanation{mode:Mode;scenes:EvidenceScene[];context:string;scope:string;topic:string;unsupported:boolean;scenario:Scenario;session_id:string|null;language:'en'|'de';source:'deterministic'|'azure';text:string;event_ids:string[];at:number;player_id:number;notice?:string}
+export interface AgentRun{status:'completed'|'fallback'|'disabled'|'unconfigured'|'skipped';model_calls:number;tools:{name:string;status:'ok'|'rejected';claim_ids:string[]}[];prompt_tokens:number;completion_tokens:number;latency_ms:number;reason:string|null}
+export interface VerifiedClaim{id:string;kind:string;text:string;event_ids:string[];at:number}
+export interface Explanation{agent?:AgentRun;claims?:VerifiedClaim[];scope_type?:'player'|'team';mode:Mode;scenes:EvidenceScene[];context:string;scope:string;topic:string;unsupported:boolean;scenario:Scenario;session_id:string|null;language:'en'|'de';source:'deterministic'|'foundry';text:string;event_ids:string[];at:number;player_id:number;notice?:string}
 export function formatTime(t:number,start=62){return `${start+Math.floor(t/60)}:${Math.floor(t%60).toString().padStart(2,'0')}`}
 

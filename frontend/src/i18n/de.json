@@ -71,8 +71,8 @@
   "explainPlayer": "Spieler einordnen",
   "comparePhases": "Spielphasen vergleichen",
   "analysing": "Analyse wird erstellt …",
-  "azureResult": "Azure-Modell · Belege prüfen",
-  "azureEnabled": "Azure aktiviert · Anfragen können Kosten verursachen",
+  "azureResult": "Foundry · geprüfte Belegauswahl",
+  "azureEnabled": "Foundry bereit · Modellaufrufe können Kosten verursachen",
   "localResult": "Lokal berechnet · keine Modellkosten",
   "version": "TacticLab · Entwicklungsstand 0.4",
   "controls": "Scrollen: Zoom · Ziehen: Kamera · Klick: Spieler",
@@ -205,5 +205,16 @@
   "fanWhy.pressing_escape": "Der Ball kommt aus der Nähe der Gegner heraus. So kann die Mannschaft mehr Zeit gewinnen, um den nächsten Angriff aufzubauen.",
   "fanWhy.switch_of_play": "Ein Pass auf die andere Seite kann einem Mitspieler mehr Platz geben, wenn es auf einer Seite eng wird. Daraus entsteht nicht automatisch eine Torchance.",
   "fanWhy.local_overload": "Mehr eigene Spieler in der Nähe können zusätzliche Anspielmöglichkeiten bieten. Ein Gegner kann den Passweg trotzdem blockieren.",
-  "emptyFavorites": "Bis hierhin gibt es keine bestätigten Szenen für deine Favoriten. Schalte den Favoritenfilter aus, um alle Szenen zu sehen."
+  "emptyFavorites": "Bis hierhin gibt es keine bestätigten Szenen für deine Favoriten. Schalte den Favoritenfilter aus, um alle Szenen zu sehen.",
+  "agentTrace": "So entstand diese Antwort",
+  "agentVerified": "Foundry hat Analysewerkzeuge aufgerufen und diese Fakten ausgewählt. Jede angezeigte Aussage wurde mit den gelieferten Belegen abgeglichen.",
+  "agentFallback": "Der Foundry-Ablauf wurde nicht abgeschlossen. Diese Antwort verwendet lokal berechnete Fakten.",
+  "agentUsage": "{calls} Modellaufrufe · {tokens} Tokens · {seconds} s",
+  "tool.statistics": "Passstatistik",
+  "tool.patterns": "Bestätigte taktische Befunde",
+  "tool.comparison": "Phasenvergleich",
+  "tool.events": "Abgeschlossene Ereignisse",
+  "tool.unknown": "Unbekanntes Werkzeug",
+  "tool.checked": "geprüft",
+  "tool.rejected": "abgewiesen"
 }

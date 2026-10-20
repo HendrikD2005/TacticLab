@@ -10,7 +10,7 @@ Targets (not yet benchmark-certified): 60 FPS on a normal laptop, local controls
 
 Dev: Vite proxies /api to FastAPI; no permissive CORS. Production: Vite assets served by FastAPI, same-origin. Docker includes frontend build and backend. Data and derived state are reproducible, so no database is needed at this stage.
 
-AI is explicitly opt-in; all keys stay server-side. The first adapter is grounded generation from preselected analysis functions, not autonomous tool use. Next steps: validated structured claims, actual tool-calling orchestration, bounded shared cache and request quota, deployment-level authentication. The local API is not an internet-hardened service.
+AI is explicitly opt-in; all keys stay server-side. The current Foundry adapter executes a bounded tool-calling loop and validates a structured selection of server-owned claims. See [Foundry integration](foundry.md) for configuration, limits and protocol. Request quota and concurrency limits are process-local. Deployment-level authentication and a shared quota would be required for a public multi-worker service.
 
 ## Initial local frame sample
 
@@ -118,4 +118,8 @@ The tactical-overlay frame sample measured median 8.3 ms and p95 8.5 ms with no 
 
 `POST /api/explain` extends the existing enum with `switch` and `overload` and accepts an optional `query` (max 240 characters). `assistant.py` resolves supported topic keywords and roster names, then uses the existing immutable intelligence index through a bounded snapshot. It returns `context`, `scope`, `topic`, `unsupported` and `scenes` in addition to the existing fields. A scene carries its event IDs, historical interval, navigation time, player ID and optional insight ID. Only confirmed findings and completed events at or before the request time are eligible. Player-pattern membership includes receiving/involved players, while passing statistics still count the player's own passes.
 
-The optional Azure adapter may rewrite wording; evidence cards remain deterministic. Unsupported questions bypass Azure. The frontend keeps a bounded 80-answer cache per workspace keyed by session, exact time, selected player, locale, topic and query. Replay movement aborts pending requests and clears stale answers. Analysis remains request-driven; no new detection or network work enters the animation loop.
+The optional Foundry agent selects analysis tools and verified claim IDs; all displayed factual prose and evidence cards are server-owned. Unsupported questions bypass Azure. The frontend keeps a bounded 80-answer cache per workspace keyed by session, exact time, selected player, locale, topic and query. Replay movement aborts pending requests and clears stale answers. Analysis remains request-driven; no new detection or network work enters the animation loop.
+
+## Foundry tool agent (2026-10-20)
+
+The adapter allows four model requests, six tool calls and two concurrent runs. Each outgoing request counts against the configured hourly quota. Tools share a fixed replay/player/team context. Strict structured output selects known claim IDs; final selection must address the requested topic. Unsupported questions, transport errors, invalid selections and exhausted budgets retain the local answer. UI provenance lists executed tools, calls, usage and duration without exposing keys. Offline protocol tests use HTTPX MockTransport; no live cloud run has been performed. The explicit smoke test is documented in `foundry.md`.

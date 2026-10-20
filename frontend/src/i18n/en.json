@@ -71,8 +71,8 @@
   "explainPlayer": "Analyse player",
   "comparePhases": "Compare periods",
   "analysing": "Preparing analysis…",
-  "azureResult": "Azure model · check the evidence",
-  "azureEnabled": "Azure enabled · requests may incur costs",
+  "azureResult": "Foundry · verified evidence selection",
+  "azureEnabled": "Foundry ready · model calls may incur costs",
   "localResult": "Calculated locally · no model costs",
   "version": "TacticLab · Development version 0.4",
   "controls": "Scroll: zoom · Drag: pan · Click: select player",
@@ -205,5 +205,16 @@
   "fanWhy.pressing_escape": "The ball gets away from nearby opponents. This can give the team more time to build its next attack.",
   "fanWhy.switch_of_play": "Moving the ball to the other side can give a teammate more room when one side is crowded. It does not necessarily create a scoring chance.",
   "fanWhy.local_overload": "Having more teammates nearby can offer more passing options. An opponent can still block the route to a teammate.",
-  "emptyFavorites": "No confirmed moments for your favourites at this time. Turn off the favourites filter to see all moments."
+  "emptyFavorites": "No confirmed moments for your favourites at this time. Turn off the favourites filter to see all moments.",
+  "agentTrace": "How this answer was built",
+  "agentVerified": "Foundry selected these facts after calling analysis tools. Every displayed claim was checked against the returned evidence.",
+  "agentFallback": "The Foundry run did not complete. This answer uses local calculated facts.",
+  "agentUsage": "{calls} model calls · {tokens} tokens · {seconds} s",
+  "tool.statistics": "Passing statistics",
+  "tool.patterns": "Confirmed tactical findings",
+  "tool.comparison": "Period comparison",
+  "tool.events": "Completed events",
+  "tool.unknown": "Unrecognised tool",
+  "tool.checked": "checked",
+  "tool.rejected": "rejected"
 }
