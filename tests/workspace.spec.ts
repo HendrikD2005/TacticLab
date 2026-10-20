@@ -68,10 +68,10 @@ test('scenario changes reset replay and isolate findings',async({page})=>{
  await page.goto('/');await page.getByLabel('Spielszenario').selectOption('variation');
  await expect(page.getByTestId('clock')).toHaveText('62:00');
  await page.getByLabel('Spielzeit',{exact:true}).fill('60');
- await expect(page.getByRole('button',{name:/Pressingdurchbruch/})).toHaveCount(2);
+ await expect(page.locator('.analysis-panel').getByRole('button',{name:/Pressingdurchbruch/})).toHaveCount(2);
  await page.getByLabel('Spielszenario').selectOption('control');
  await expect(page.getByTestId('clock')).toHaveText('62:00');
  await page.getByLabel('Spielzeit',{exact:true}).fill('60');
  await expect(page.getByText(/Bisher kein bestätigter taktischer Befund/)).toBeVisible();
- await expect(page.getByRole('button',{name:/Pressingdurchbruch/})).toHaveCount(0);
+ await expect(page.locator('.analysis-panel').getByRole('button',{name:/Pressingdurchbruch/})).toHaveCount(0);
 });

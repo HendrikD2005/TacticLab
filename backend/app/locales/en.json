@@ -45,5 +45,6 @@
   "notice.foundry.busy": "Foundry is busy. Showing calculated facts.",
   "notice.foundry.validation": "The model's evidence selection could not be verified. Showing calculated facts.",
   "notice.foundry.budget": "Foundry reached its analysis step limit. Showing calculated facts.",
-  "notice.foundry.unavailable": "Foundry is unavailable or timed out. Showing calculated facts."
+  "notice.foundry.unavailable": "Foundry is unavailable or timed out. Showing calculated facts.",
+  "recap.no_patterns": "No tactical pattern has been confirmed for this team by this time."
 }

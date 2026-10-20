@@ -66,3 +66,9 @@ body{padding:0}
 @media(max-width:600px){#tl .personalization{padding:12px 16px}.personalization-fields label{width:100%;min-width:0}}
 
 #tl .agent-trace{margin:12px 0;border-top:1px solid var(--line);padding-top:12px;font-size:12px}#tl .agent-trace summary{cursor:pointer;font-weight:600}#tl .agent-trace ol{padding-left:20px}#tl .agent-trace li{margin:5px 0}
+
+#tl .short-report{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+#tl .report-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#tl .report-heading p{margin:4px 0 0}#tl .report-claims{margin:10px 0;padding-left:18px;font-size:13px;line-height:1.5}#tl .report-claims li+li{margin-top:6px}
+#tl .report-evidence{display:flex;flex-wrap:wrap;gap:6px}#tl .short-report>.sample{margin:10px 0 0}
+@media(max-width:600px){#tl .report-heading{align-items:flex-start}#tl .report-heading .group{flex-wrap:wrap;justify-content:flex-end}#tl .short-report{padding:12px}#tl .report-evidence .button{white-space:normal;height:auto;min-height:32px}}

@@ -17,7 +17,7 @@ test('switch and overload evidence, filters, historical markings and rewind',asy
  await expect(page.getByTestId('tactical-detail')).toContainText('3 v 2');
  await expect(page.getByTestId('tactical-detail')).toContainText('15 m');
  await page.getByLabel('Tactical pattern',{exact:true}).selectOption('switch_of_play');
- await expect(page.getByRole('button',{name:/Local overload/})).toHaveCount(0);
+ await expect(page.locator('.analysis-panel').getByRole('button',{name:/Local overload/})).toHaveCount(0);
  await expect(page.locator('canvas')).toHaveAttribute('data-insight','');
  await page.getByLabel('Tactical pattern',{exact:true}).selectOption('local_overload');
  await page.getByRole('button',{name:/62:16.*Local overload/}).click();

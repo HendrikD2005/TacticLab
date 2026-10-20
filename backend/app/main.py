@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from .data import generate_match, generate_tactical_match
 from .analysis import snapshot
+from .recaps import build_recap
 from .intelligence import MatchIntelligence
 from .ai import configured, explain
 from .foundry import status as ai_status
@@ -32,10 +33,13 @@ def health(): return {'status':'ok','ai_enabled':configured(),'data':'synthetic'
 def get_match(scenario: Scenario = 'standard'): return matches[scenario]
 
 @app.get('/api/analysis')
-def get_analysis(at: float=Query(0,ge=0,le=60),player_id: int=Query(7,ge=0,le=21), scenario: Scenario = 'standard', language: Language = 'en', session_id: UUID | None = None):
+def get_analysis(at: float=Query(0,ge=0,le=60),player_id: int=Query(7,ge=0,le=21), scenario: Scenario = 'standard', language: Language = 'en', session_id: UUID | None = None, mode: Literal['analyst','fan'] = 'analyst'):
     session_key = str(session_id) if session_id else None
     at = live_sessions.limit(session_key, scenario, at)
-    return {**snapshot(matches[scenario],at,player_id,engines[scenario],language), 'session_id':session_key}
+    facts = snapshot(matches[scenario],at,player_id,engines[scenario],language)
+    request = AnalysisRequest(at=at,player_id=player_id,scenario=scenario,language=language,mode=mode,question='recap')
+    recap = {**build_recap(matches[scenario],request,engines[scenario],facts=facts),'session_id':session_key}
+    return {**facts, 'mode':mode, 'recap':recap, 'session_id':session_key}
 
 @app.post('/api/explain')
 async def get_explanation(request: AnalysisRequest):

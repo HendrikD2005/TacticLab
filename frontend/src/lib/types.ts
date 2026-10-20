@@ -15,7 +15,7 @@ export type TacticalInsight=InsightBase & (
  {kind:'switch_of_play';evidence:{width_m:number;distance_m:number;space_after_m:number;retained_s:number};overlay:PassOverlay} |
  {kind:'local_overload';evidence:{attackers:number;defenders:number;minimum_advantage:number;radius_m:number;retained_s:number};overlay:{center:number[];radius:number;at:number;members:{id:number;team:'home'|'away';point:number[]}[]}}
 );
-export interface Analysis{session_id:string|null;language:'en'|'de';scenario:Scenario;possession:Possession;insights:TacticalInsight[];at:number;player_id:number;player:Metrics;team:Metrics;comparison:({label:string}&Metrics)[]}
+export interface Analysis{mode:Mode;recap:Explanation;session_id:string|null;language:'en'|'de';scenario:Scenario;possession:Possession;insights:TacticalInsight[];at:number;player_id:number;player:Metrics;team:Metrics;comparison:({label:string}&Metrics)[]}
 export interface EvidenceScene{id:string;insight_id:string|null;at:number;start:number;end:number;title:string;reason:string;player_id:number;event_ids:string[]}
 export interface AgentRun{status:'completed'|'fallback'|'disabled'|'unconfigured'|'skipped';model_calls:number;tools:{name:string;status:'ok'|'rejected';claim_ids:string[]}[];prompt_tokens:number;completion_tokens:number;latency_ms:number;reason:string|null}
 export interface VerifiedClaim{id:string;kind:string;text:string;event_ids:string[];at:number}

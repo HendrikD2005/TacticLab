@@ -216,5 +216,12 @@
   "tool.events": "Abgeschlossene Ereignisse",
   "tool.unknown": "Unbekanntes Werkzeug",
   "tool.checked": "geprüft",
-  "tool.rejected": "abgewiesen"
+  "tool.rejected": "abgewiesen",
+  "shortReport": "Spiel-Kurzbericht",
+  "reportLoading": "Aktuelle Analyse wird geladen…",
+  "curateReport": "Mit Foundry auswählen",
+  "downloadBrief": "Kurzbericht herunterladen",
+  "reportLocal": "Aus beobachteten Daten berechnet",
+  "reportFoundry": "Belegauswahl durch Foundry",
+  "reportCaution": "Synthetischer Ausschnitt; keine Aussage zur gesamten Partie."
 }

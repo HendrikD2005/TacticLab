@@ -45,5 +45,6 @@
   "notice.foundry.busy": "Foundry ist ausgelastet. Berechnete Fakten werden angezeigt.",
   "notice.foundry.validation": "Die Belegauswahl des Modells konnte nicht geprüft werden. Berechnete Fakten werden angezeigt.",
   "notice.foundry.budget": "Foundry hat das Limit für Analyseschritte erreicht. Berechnete Fakten werden angezeigt.",
-  "notice.foundry.unavailable": "Foundry ist nicht erreichbar oder hat das Zeitlimit überschritten. Berechnete Fakten werden angezeigt."
+  "notice.foundry.unavailable": "Foundry ist nicht erreichbar oder hat das Zeitlimit überschritten. Berechnete Fakten werden angezeigt.",
+  "recap.no_patterns": "Bis zu diesem Zeitpunkt ist für dieses Team kein taktisches Muster bestätigt."
 }

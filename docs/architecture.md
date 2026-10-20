@@ -91,7 +91,7 @@ The event explorer is memoized and computes filters on replay-second/event-count
 
 The notebook uses `tl-scenes:v1:<match-id>:<scenario>` in local storage. Read validation rejects malformed JSON, duplicate IDs, invalid players/times and overlong notes. Writes occur on explicit save/delete, never on playback ticks. A storage failure leaves the current in-memory notebook usable with a visible notice. Saved scenes reference timestamps, players and optional insight IDs; they do not copy tracking buffers. New live sessions lock scenes beyond their received boundary and hide their note text until available. This is local browsing state, not shared collaboration or durable server storage.
 
-Report generation is an explicit client-side operation. It clamps the export time to received data and match duration, excludes later events/notes, and includes only compatible analysis at or before that cutoff. The UI enables export once the requested replay second's analysis is available. JSON includes schema version 1, synthetic-data attribution, scenario, language, player roster and timestamps. No backend call, tracking-array copy or cloud upload is needed to export. Downloads are local and temporary object URLs are revoked.
+Report generation is an explicit client-side operation. It clamps the export time to received data and match duration, excludes later events/notes, and includes only compatible analysis at or before that cutoff. The UI enables export once the requested replay second's analysis is available. JSON includes schema version 2 and the current grounded short report, synthetic-data attribution, scenario, language, player roster and timestamps. No backend call, tracking-array copy or cloud upload is needed to export. Downloads are local and temporary object URLs are revoked.
 
 Validation: TypeScript/production build, 49 backend tests and 20 Playwright tests pass. New checks cover search/filter/seek, camera identity, scene persistence and scenario isolation, locked future scenes during live reception, report cutoffs, unavailable/malformed storage, editing-safe shortcuts and responsive English/German layouts. Screenshot workflow: `node scripts/workspace-check.mjs`; existing replay/live performance scripts remain available. A standalone local replay sample with pressure overlay and zoom measured 8.3 ms median, 9.0 ms p95, with no frames above 33.4 ms out of 180; display refresh and machine load affect these short samples.
 
@@ -123,3 +123,24 @@ The optional Foundry agent selects analysis tools and verified claim IDs; all di
 ## Foundry tool agent (2026-10-20)
 
 The adapter allows four model requests, six tool calls and two concurrent runs. Each outgoing request counts against the configured hourly quota. Tools share a fixed replay/player/team context. Strict structured output selects known claim IDs; final selection must address the requested topic. Unsupported questions, transport errors, invalid selections and exhausted budgets retain the local answer. UI provenance lists executed tools, calls, usage and duration without exposing keys. Offline protocol tests use HTTPX MockTransport; no live cloud run has been performed. The explicit smoke test is documented in `foundry.md`.
+
+
+## Grounded match briefs (2026-10-20)
+
+Every analysis response includes a local team brief for the selected player's team,
+with passing totals and up to two recent confirmed tactical kinds. It shares the
+already calculated snapshot; playback never triggers a model request. Each claim
+has its cutoff, stable ID and source event IDs. Historical scenes navigate to their
+confirmation time. Mode and locale are part of analysis request identity, so stale
+responses cannot substitute a report in another language or detail level.
+
+An explicit Foundry selection can replace the brief. It must retain passing
+statistics and at least one confirmed pattern when one exists. Rewinding, changing
+player/language/mode, or switching scenarios invalidates the answer. Live reports
+also respect the server's available time. JSON schema 2 embeds the current brief;
+the separate UTF-8 text download contains claims, event IDs, timestamps and the
+synthetic-data/sample limitation. Both downloads stay on the user's computer.
+
+Verification: 137 backend tests, targeted browser tests for local/model-selected
+briefs, text/JSON export, language, team, rewind and scene navigation, plus TypeScript
+and production build. Foundry HTTP responses remain simulated; cloud access is deferred.

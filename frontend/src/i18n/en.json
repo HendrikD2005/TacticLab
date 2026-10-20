@@ -216,5 +216,12 @@
   "tool.events": "Completed events",
   "tool.unknown": "Unrecognised tool",
   "tool.checked": "checked",
-  "tool.rejected": "rejected"
+  "tool.rejected": "rejected",
+  "shortReport": "Match brief",
+  "reportLoading": "Waiting for the current analysis…",
+  "curateReport": "Select with Foundry",
+  "downloadBrief": "Download short report",
+  "reportLocal": "Calculated from observed data",
+  "reportFoundry": "Evidence selected by Foundry",
+  "reportCaution": "Synthetic sample; no conclusion about the entire match."
 }

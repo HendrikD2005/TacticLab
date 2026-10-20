@@ -46,11 +46,11 @@ def pattern_claim(insight, request, player_id):
 class EvidenceTools:
     """One immutable context; the model cannot override time, team or player."""
 
-    def __init__(self, match, request, intelligence, base):
+    def __init__(self, match, request, intelligence, base, facts=None):
         self.match, self.request, self.base = match, request, base
         self.player = match.players[base["player_id"]]
         self.player_scope = base.get("scope_type") == "player"
-        self.facts = snapshot(match, request.at, self.player.id, intelligence, request.language)
+        self.facts = facts if facts is not None else snapshot(match, request.at, self.player.id, intelligence, request.language)
         self.metrics = self.facts["player"] if self.player_scope else self.facts["team"]
         self.events = [e for e in match.events if e.time <= request.at
                        and (e.player_id == self.player.id if self.player_scope
@@ -69,7 +69,7 @@ class EvidenceTools:
             text=self.base["scope"] + ". " + tr("fan.metrics" if req.mode == "fan" else "metrics",
                                                req.language, time=timestamp, **self.metrics),
             event_ids=self.metrics["event_ids"],
-            scenes=[event_claim(self.match, e, req)["scenes"][0] for e in self.events[-4:]],
+            scenes=[event_claim(self.match, e, req)["scenes"][0] for e in [e for e in self.events if e.id in self.metrics["event_ids"]][-4:]],
             at=req.at,
         )
         return [claim]

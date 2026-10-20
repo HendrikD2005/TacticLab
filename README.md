@@ -133,3 +133,7 @@ In Fan mode, **Favourite moments only** includes confirmed moments for the favou
 Assistant requests include `mode` (`analyst` by default). Fan answers and evidence descriptions use plain-language summaries; event IDs and confirmation times are identical across modes. Team shortcuts in Fan mode use the favourite team when set. Player questions use the inspected player, and an explicit roster name takes precedence. Switching mode or favourite team cancels stale answers; mode is part of the answer-cache key. Opening an assistant scene outside the favourites filter restores the full list so the requested evidence remains visible.
 
 Preference writes occur only on user changes. Existing bounded snapshots supply the filtered scene list; no detection, storage or requests run in the canvas animation loop. `node scripts/personalization-check.mjs` captures the fan view and samples playback frame intervals with favourite-player follow enabled.
+
+## Grounded short reports
+
+The match brief updates with the replay and selected player's team, in English or German and analyst/fan mode. Its claims reference completed events and confirmed tactical scenes. Download a readable text brief from the card or include it in the JSON report (schema 2). Foundry evidence selection is an explicit action when configured; automatic playback analysis stays local.
