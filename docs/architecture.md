@@ -83,9 +83,21 @@ Protocol references: [FastAPI StreamingResponse](https://fastapi.tiangolo.com/ad
 The local live sample on 2026-10-15 measured median 16.7 ms, p95 17.2 ms and no frames above 33.4 ms out of 180. This short headless Edge sample is not a sustained or cross-device guarantee.
 
 
-## Fluent-inspired analysis workspace
+## Swiss minimal analysis workspace
 
-The application shell uses Segoe's native system font stack, neutral solid surfaces, a consistent 32 px button family, a blue primary action, persistent navigation and a compact command bar. Light/dark colors are semantic variables in `frontend/src/fluent.css`; football remains green on Canvas. Responsive layouts replace the desktop side navigation with a horizontal navigation bar. No new UI framework, web font service or paid dependency was added. Inspiration: [Microsoft Fluent typography](https://fluent2.microsoft.design/typography) and [design principles](https://fluent2.microsoft.design/design-principles).
+The application shell uses a horizontal numbered navigation, an editorial grid,
+warm neutral surfaces and locally hosted Inter. Own React primitives wrap native
+buttons, selects, text inputs and the timeline; there is no component-framework
+runtime. Semantic light/dark tokens live in `frontend/src/swiss.css`, replacing
+the former layered stylesheets. A fresh visit uses light mode and saved theme
+choices persist. The pitch retains distinct semantic team colours.
+
+Desktop layouts place pitch and report side by side and adapt pitch height to
+keep replay controls visible. Small screens use one column with the brief first;
+touch controls have larger targets. Font delivery, theme persistence, keyboard
+operation and narrow German touch layouts are covered by Playwright. See the
+[design system](design-system.md) for components, tokens, font licensing and
+the Swiss reference.
 
 The event explorer is memoized and computes filters on replay-second/event-count/filter changes, not animation frames. Search covers passer, receiver and source event ID. Clicking an event seeks to its completed timestamp. Navigation changes only the lower analysis panel; the existing Canvas and LiveFeed stay mounted. Historical insight overlays retain their original meaning.
 

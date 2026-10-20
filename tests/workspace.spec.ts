@@ -29,7 +29,7 @@ test('replay, real analytics, selection and free explanation',async({page})=>{
 test('small screen and theme',async({page})=>{
  await page.setViewportSize({width:360,height:900});await page.goto('/');await expect(page.getByLabel('Spieler auswählen')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
- await page.getByRole('button',{name:'Helles Design'}).click();await expect(page.getByRole('button',{name:'Dunkles Design'})).toBeVisible();
+ await page.getByRole('button',{name:'Dunkles Design'}).click();await expect(page.getByRole('button',{name:'Helles Design'})).toBeVisible();
 });
 
 

@@ -1,3 +1,5 @@
+import {SectionHeading} from '@/components/ui/editorial';
+import {Select} from '@/components/ui/fields';
 import {useEffect,useState} from 'react';
 import {useI18n} from '@/i18n';
 import {Button} from '@/components/ui/button';
@@ -9,8 +11,8 @@ export default function TacticalInsights({personalized,insights,active,mode,play
  const visible=insights.filter(i=>kind==='all'||i.kind===kind);
  const badge=(i:TacticalInsight)=>i.kind==='pressing_escape'?`+${number(i.evidence.gain_m)} m`:i.kind==='switch_of_play'?`${number(i.evidence.width_m)} m`:`${i.evidence.attackers} v ${i.evidence.defenders}`;
  return <section className="tactical-insights" aria-label={t('automaticAnalysis')}>
-  <div className="sectiontitle"><span>{t('escapes')} <span className="muted">{visible.length}</span></span><Button variant="ghost" aria-pressed={focused} onClick={onFocus}>{t('selectedOnly')}</Button></div>
-  <label className="pattern-filter">{t('kindFilter')}<select aria-label={t('kindFilter')} value={kind} onChange={e=>{const next=e.target.value as typeof kind;setKind(next);if(active&&next!=='all'&&active.kind!==next)onClear()}}><option value="all">{t('allPatterns')}</option>{(['pressing_escape','switch_of_play','local_overload'] as const).map(k=><option key={k} value={k}>{t(`kind.${k}`)}</option>)}</select></label>
+  <SectionHeading index="04" title={<>{t('escapes')} <span className="count-badge">{visible.length}</span></>} actions={<Button variant="ghost" aria-pressed={focused} onClick={onFocus}>{t('selectedOnly')}</Button>}/>
+  <label className="pattern-filter">{t('kindFilter')}<Select aria-label={t('kindFilter')} value={kind} onChange={e=>{const next=e.target.value as typeof kind;setKind(next);if(active&&next!=='all'&&active.kind!==next)onClear()}}><option value="all">{t('allPatterns')}</option>{(['pressing_escape','switch_of_play','local_overload'] as const).map(k=><option key={k} value={k}>{t(`kind.${k}`)}</option>)}</Select></label>
   {visible.length===0?<p className="insight-empty">{focused?t('emptyPlayer'):personalized?t('emptyFavorites'):t('emptyEscapes')}</p>:<div className="moments">{visible.map(i=><Button className="moment" key={i.id} aria-pressed={active?.id===i.id} onClick={()=>onSelect(i)}><span>{formatTime(i.end)} · {i.team==='home'?'NTH':'RIV'}</span><b>{mode==='fan'&&i.kind==='pressing_escape'?t('fanEscape'):i.title}</b><span className="moment-gain">{badge(i)}</span></Button>)}</div>}
   {active&&<article className="tactical-detail" data-testid="tactical-detail" data-kind={active.kind}>
    <div className="detail-heading"><div><div className="eyebrow">{mode==='analyst'?t('ruleBased'):t('keyAction')}</div><h2>{active.kind==='local_overload'?`${active.title} · ${badge(active)}`:<>{players.find(p=>p.id===active.player_ids[0])?.name} → {players.find(p=>p.id===active.player_ids[1])?.name}</>}</h2></div><Button variant="ghost" onClick={onClear} aria-label={t('hideOverlay')}>{t('hide')}</Button></div>

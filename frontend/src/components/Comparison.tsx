@@ -10,7 +10,7 @@ export default memo(function Comparison({data}:{data:Analysis['comparison']}){
    <XAxis dataKey="label" tick={{fill:'var(--muted)',fontSize:10}} axisLine={false} tickLine={false}/>
    <YAxis allowDecimals={false} tickFormatter={number} tick={{fill:'var(--muted)',fontSize:10}} axisLine={false} tickLine={false}/>
    <Tooltip cursor={{fill:'var(--soft)'}} contentStyle={{background:'var(--surface)',border:'1px solid var(--line)',color:'var(--text)',fontSize:12}}/>
-   <Bar dataKey="progressive" name={t('progressive')} fill="#2873ff" maxBarSize={34} isAnimationActive={false}/>
+   <Bar dataKey="progressive" name={t('progressive')} fill="var(--ink)" maxBarSize={34} isAnimationActive={false}/>
   </BarChart></ResponsiveContainer>
  </div>;
 });

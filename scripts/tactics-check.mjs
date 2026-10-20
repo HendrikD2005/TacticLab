@@ -13,9 +13,9 @@ try{
  await page.getByRole('button',{name:/62:16.*Local overload/}).click();
  await page.evaluate(()=>window.scrollTo(0,0));
  await page.screenshot({path:'artifacts/tactics-overload.png',fullPage:true});
- await page.getByRole('button',{name:'Light theme'}).click();
+ await page.getByRole('button',{name:'Dark theme'}).click();
  await page.evaluate(()=>window.scrollTo(0,0));
- await page.screenshot({path:'artifacts/tactics-overload-light.png',fullPage:true});
+ await page.screenshot({path:'artifacts/tactics-overload-dark.png',fullPage:true});
  await page.getByRole('button',{name:'Pressure zones',exact:true}).click();
  await page.getByRole('button',{name:'Zoom in'}).click();
  await page.getByRole('button',{name:'Play replay',exact:true}).click();

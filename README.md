@@ -20,11 +20,11 @@ Linux/macOS: create `.venv`, install `backend/requirements.lock`, run `npm ci` a
 
 ## Stack
 
-React 19, TypeScript, Vite, Tailwind CSS 4, shadcn-style locally owned Button component with Radix Slot/CVA, Lucide, Canvas 2D + D3 Zoom, lazy-loaded Recharts, Python/FastAPI/Pydantic/NumPy, pytest, Playwright, Docker and GitHub Actions.
+React 19, TypeScript, Vite, locally owned native UI components and CSS design tokens, self-hosted Inter, Lucide, Canvas 2D + D3 Zoom, lazy-loaded Recharts, Python/FastAPI/Pydantic/NumPy, pytest, Playwright, Docker and GitHub Actions.
 
 ## Implemented
 
-- Fluent-inspired navigation, command bar and consistent controls in light/dark themes.
+- Swiss minimal interface with numbered navigation, an editorial grid, locally hosted Inter and consistent native controls in light/dark themes. See [the design system](docs/design-system.md).
 - 22 selectable players; zoom, drag, player following and camera reset.
 - Searchable event explorer with team, result, pressure and selected-player filters.
 - Browser-local scene notebook with tactical notes and timestamped JSON report export.

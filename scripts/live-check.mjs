@@ -24,9 +24,9 @@ try{
  await writeFile('artifacts/live-frame-sample.json',JSON.stringify(timings,null,2));console.log('Live frame sample:',timings);
  await page.getByRole('button',{name:'Full pitch',exact:true}).click();
  await page.getByRole('button',{name:/62:07.*Pressure escape/}).click();
- await page.screenshot({path:'artifacts/live-dark.png',fullPage:true});
- await page.getByRole('button',{name:'Light theme'}).click();
  await page.screenshot({path:'artifacts/live-light.png',fullPage:true});
+ await page.getByRole('button',{name:'Dark theme'}).click();
+ await page.screenshot({path:'artifacts/live-dark.png',fullPage:true});
  await page.getByLabel('Language',{exact:true}).selectOption('de');
  await page.setViewportSize({width:360,height:900});
  await page.screenshot({path:'artifacts/live-mobile.png',fullPage:true});

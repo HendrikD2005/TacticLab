@@ -1,3 +1,5 @@
+import {SectionHeading} from '@/components/ui/editorial';
+import {Textarea} from '@/components/ui/fields';
 import {Bookmark,Trash2} from 'lucide-react';
 import {useI18n} from '@/i18n';
 import {Button} from './ui/button';
@@ -7,8 +9,8 @@ interface Props{match:Match;scenes:SavedScene[];available:number;temporary:boole
 export default function Notebook({match,scenes,available,temporary,draft,onDraft,onSave,onInspect,onRemove}:Props){
  const {t}=useI18n();
  return <section aria-label={t('notebook')}>
-  <div className="section-heading"><div><h2>{t('notebook')}</h2><p>{t(temporary?'temporaryNotes':'localNotes')}</p></div><span className="count-badge">{scenes.length} / {MAX_SCENES}</span></div>
-  {draft&&<form className="note-editor" onSubmit={e=>{e.preventDefault();onSave()}}><div className="note-context"><Bookmark size={16}/>{formatTime(draft.at,match.start_minute)} · {match.players.find(p=>p.id===draft.player)?.name}</div><label htmlFor="scene-note">{t('sceneNote')}</label><textarea id="scene-note" autoFocus rows={3} maxLength={1000} value={draft.text} placeholder={t('notePlaceholder')} onChange={e=>onDraft({...draft,text:e.target.value})}/><div className="note-actions"><span>{draft.text.length} / 1000</span><Button type="button" onClick={()=>onDraft(null)}>{t('cancel')}</Button><Button variant="primary" type="submit" disabled={scenes.length>=MAX_SCENES}>{t('saveScene')}</Button></div></form>}
+  <SectionHeading index="04" title={t('notebook')} description={t(temporary?'temporaryNotes':'localNotes')} actions={<span className="count-badge">{scenes.length} / {MAX_SCENES}</span>}/>
+  {draft&&<form className="note-editor" onSubmit={e=>{e.preventDefault();onSave()}}><div className="note-context"><Bookmark size={16}/>{formatTime(draft.at,match.start_minute)} · {match.players.find(p=>p.id===draft.player)?.name}</div><label htmlFor="scene-note">{t('sceneNote')}</label><Textarea id="scene-note" autoFocus rows={3} maxLength={1000} value={draft.text} placeholder={t('notePlaceholder')} onChange={e=>onDraft({...draft,text:e.target.value})}/><div className="note-actions"><span>{draft.text.length} / 1000</span><Button type="button" onClick={()=>onDraft(null)}>{t('cancel')}</Button><Button variant="primary" type="submit" disabled={scenes.length>=MAX_SCENES}>{t('saveScene')}</Button></div></form>}
   {scenes.length===0&&!draft?<div className="empty-state"><Bookmark/><h3>{t('noScenes')}</h3><p>{t('noScenesHint')}</p></div>:<div className="saved-scenes">{[...scenes].reverse().map(scene=>{
    const locked=scene.at>available;
    return <article className="saved-scene" key={scene.id}><Button className="scene-open" disabled={locked} onClick={()=>onInspect(scene)}><span><time>{formatTime(scene.at,match.start_minute)}</time><strong>{locked?t('scenePending'):match.players.find(p=>p.id===scene.player)?.name}</strong></span><p>{locked?t('scenePendingHint'):scene.text||t('untitledScene')}</p></Button><Button size="icon" variant="ghost" aria-label={t('deleteScene',{time:formatTime(scene.at,match.start_minute)})} onClick={()=>onRemove(scene.id)}><Trash2/></Button></article>;

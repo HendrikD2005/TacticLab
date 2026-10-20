@@ -16,8 +16,8 @@ for(const viewport of [{width:1440,height:900},{width:1366,height:768}]){
   expect(card!.y).toBeLessThan(400);expect(card!.y+card!.height).toBeLessThan(viewport.height);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
   await page.screenshot({animations:'disabled',path:`artifacts/first-screen-${viewport.width}.png`});
-  await page.getByRole('button',{name:'Light theme',exact:true}).click();
-  await page.screenshot({animations:'disabled',path:`artifacts/first-screen-light-${viewport.width}.png`});
+  await page.getByRole('button',{name:'Dark theme',exact:true}).click();
+  await page.screenshot({animations:'disabled',path:`artifacts/first-screen-dark-${viewport.width}.png`});
  });
 }
 

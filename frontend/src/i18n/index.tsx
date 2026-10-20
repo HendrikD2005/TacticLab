@@ -1,3 +1,4 @@
+import {Select} from '@/components/ui/fields';
 import {createContext,useContext,useEffect,useMemo,useState,type ReactNode} from 'react';
 import en from './en.json';
 import de from './de.json';
@@ -45,5 +46,5 @@ export function useI18n(){
 }
 export function LanguagePicker(){
  const {language,setLanguage,t}=useI18n();
- return <select className="language-picker" aria-label={t('language')} value={language} onChange={e=>setLanguage(e.target.value as Language)}><option value="en">English</option><option value="de">Deutsch</option></select>;
+ return <Select className="language-picker" aria-label={t('language')} value={language} onChange={e=>setLanguage(e.target.value as Language)}><option value="en">English</option><option value="de">Deutsch</option></Select>;
 }
